@@ -3,64 +3,81 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 
 document.addEventListener("DOMContentLoaded", () => {
-    fetchQuestions()
-    // fetchUserQuestions()
+  fetchQuestions()
+  // fetchUserQuestions()
+  
+
 })
 
-function fetchQuestions(){
+function fetchQuestions() {
   fetch(QUESTIONS_URL)
-  .then(resp => resp.json())
-  .then (questionsArr => questionsArr.forEach(question => renderQuestions(question))
-)}
+    .then(resp => resp.json())
+    .then(questionsArr =>
+      questionsArr.forEach(question =>
+        renderQuestions(question))
+    )
+}
 
-function renderQuestions(question){
+function renderQuestions(question) {
   const container = document.querySelector("main"),
     ul = document.querySelector(".questions-list"),
     // div = document.createElement("div"),
     li = document.createElement("li")
-    li.innerText = question.question_text
+  li.innerText = question.question_text
 
-    // let arr = "['Tied to a boulder for eternity, being pecked by birds., Standing in a lake filled with water he could not drink., To fell a tree that regenerated after every axe swing.']"
-    // // arr
-    // console.log(arr)
-    // console.log("--------------------")
-    // let wrongAnswers = arr.split(".")
-    // wrongAnswers.unshift(arr[0])
-    // wrongAnswers.slice(wrongAnswers[0][1])
-    // wrongAnswers.shift()
-    // wrongAnswers.pop()
-    // console.log(wrongAnswers)
-    // console.log("--------------------")
-    // let anotherArr = wrongAnswers
+  let startArr = []
+  startArr = question.incorrect_answers
 
-    // questionArr.push(question.correct_answer)
-    incorrectAnswers.push(question.incorrect_answers)
-    // let wrongAnswers = incorrectAnswers
-    let wrongAnswers = []
-    wrongAnswers = question.incorrect_answers
+  let wrongAnswers = JSON.parse("[" + startArr + "]")
 
-    wrongAnswers.split(".")
-    wrongAnswers.slice(wrongAnswers[0][1])
-    console.log(wrongAnswers)
-    // wrongAnswers.shift()
-    // wrongAnswers.pop()
-    // console.log(wrongAnswers)
-    const innerUl = document.createElement("ul")
-    debugger
-    
-    incorrectAnswers.forEach(answer => {
-      const wrongLi = document.createElement("li")
-      wrongLi.innerText = answer
-      innerUl.append(wrongLi)
-    })
-      const correctLi = document.createElement("li")
-      correctLi.innerText = question.correct_answer
-      innerUl.append(correctLi)
-    li.append(innerUl)
-    ul.append(li)
-    // div.append(ul)
-    // container.append(div)
+  console.log(wrongAnswers)
+
+  let newArr = []
+  for (i = 0; i < wrongAnswers.length; i++) {
+    newArr.push(wrongAnswers[i])
+  }
+
+  const innerUl = document.createElement("ul")
+  const finalArr = newArr[0]
+  finalArr.forEach(function (answer) {
+    const wrongLi = document.createElement("li")
+    wrongLi.classList.add("answer")
+    wrongLi.innerText = answer
+    innerUl.append(wrongLi)
+  })
+
+  const correctLi = document.createElement("li")
+  correctLi.classList.add("answer")
+  correctLi.innerText = question.correct_answer
+  innerUl.append(correctLi)
+  li.append(innerUl)
+  ul.append(li)
+
+  const answerClick = document.querySelectorAll(".answer")
+  answerClick.addEventListener("click", (event) => submitAnswer(event, question))
 }
+
+function submitAnswer(event, question){
+  debugger
+  if (event.target.value === question.correct_answer){
+
+  obj = {
+    question_id: question.id,
+
+  }
+
+  fetch(USERQUESTIONS_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/json",
+    "Accept": "application/json"},
+
+  })
+  // div.append(ul)
+  // container.append(div)
+}
+  else{
+    console.log("nope")
+}}
 // create_table "questions", force: :cascade do |t|
 // t.string "question_text"
 // t.string "correct_answer"
@@ -134,7 +151,7 @@ function renderQuestions(question){
 //       headers: {"Content-type": "application/json", 
 //       "Accept": "application/json"},
 //       body: JSON.stringify(newPokemon)
-    
+
 //     })
 //     .then(resp => resp.json())
 //     .then(pokemon => { 
@@ -158,7 +175,7 @@ function renderQuestions(question){
 //       headers: {"Content-type": "application/json", 
 //       "Accept": "application/json"},
 //       body: JSON.stringify(toDelete)
-    
+
 //     })
 //     event.target.parentNode.remove()
 //   }
