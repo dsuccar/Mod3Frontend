@@ -6,17 +6,17 @@ let page = 1;
 let userId = 1
 let globalPoints = 0
 
-// function stringFixer1(string){
-//   return string.replace(/&quot;/g, "'")
-// }
+function stringFixer1(string){
+  return string.replace(/&quot;/g, "'")
+}
 
-// function stringFixer2(string){
-//   return string.replace(/&#039;/g, "'")
-// }
+function stringFixer2(string){
+  return string.replace(/&#039;/g, "'")
+}
 
-// function stringFixer3(string){
-//   return string.replace(/&amp/g, "&")
-// }
+function stringFixer3(string){
+  return string.replace(/&amp/g, "&")
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   // fetchQuestions()
@@ -75,13 +75,13 @@ function renderQuestions(question) {
   questionContainer.innerHTML = ""
   const questionText = document.createElement("h3")
   questionText.classList.add("question-text")
-  let dataText = randomQuestion.question_text
-  console.log(dataText) //string
+  let dataText3 = randomQuestion.question_text
+  console.log(dataText3) //string
   
-  // let dataText1 = stringFixer1(dataText)
-  // let dataText2 = stringFixer2(dataText1)
-  // questionText.innerText = dataText2
-  questionText.innerText = randomQuestion.question_text
+  let dataText2 = stringFixer1(dataText3)
+  let dataText = stringFixer2(dataText2)
+  questionText.innerText = dataText
+  // questionText.innerText = randomQuestion.question_text
 
   questionContainer.append(questionText)
   
@@ -89,12 +89,21 @@ function renderQuestions(question) {
   answerContainer.classList.add("answer-container")
   questionContainer.append(answerContainer)
 
+  let dataCorrect3 = randomQuestion.correct_answer
+  let dataCorrect2 = stringFixer1(dataCorrect3)
+  let dataCorrect = stringFixer2(dataCorrect2)
   let rawAnswersArray = []
-  rawAnswersArray.push(randomQuestion.correct_answer)
+  rawAnswersArray.push(dataCorrect)
+  // rawAnswersArray.push(randomQuestion.correct_answer)
 
   let stringOfNestedWrongAnswersArray = randomQuestion.incorrect_answers
-  const nestedIncorrectAnswersArray = JSON.parse("[" + stringOfNestedWrongAnswersArray + "]")
-  const incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
+  let dataIncorrect3 = stringOfNestedWrongAnswersArray
+  let dataIncorrect2 = stringFixer1(dataIncorrect3)
+  let dataIncorrect = stringFixer2(dataIncorrect2)
+
+  nestedIncorrectAnswersArray = JSON.parse("[" + dataIncorrect + "]")
+  incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
+
   rawAnswersArray.push(incorrectAnswersArray)
   let answersArr = rawAnswersArray.flat()
 
