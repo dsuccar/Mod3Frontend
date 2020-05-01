@@ -5,7 +5,7 @@ const USERS_URL = `${BASE_URL}/users`
 let page = 1;
 userId = 1
 // const flatten = require('lodash.flatten')
-function addListeners(){ //didn't work
+function addListeners(){ //didn't work to fix multiple firing bug
   const correct = document.querySelector(".correct-answer")
   correct.addEventListener("click", (event) => submitAnswer(event))
 
@@ -52,26 +52,16 @@ function renderMain(){
 
 function renderQuestions(question) {
   console.log("Rendering question for user")
+
   const h1 = document.querySelector("h1")
 
   h1.style.display = "none"
 
-  // const ul = document.querySelector(".questions-list")
-  // const li = document.createElement("li")
-
-  // li.innerText = question.question_text
-  // ul.append(li)
-  const div = document.querySelector(".question-container")
-  // const p = document.createElement("p")
-  // const p2 = document.createElement("p")
-  // p2.innerText = question.incorrect_answers
-  // p.innerText = question.question_text
-  // div.append(p, p2)
+  const div = document.getElementById("question-container")
 
   const ul = document.createElement("ul")
   ul.classList.add("questions-ul")
   const li = document.createElement("li")
-
   li.innerText = question.question_text
   ul.append(li)
   div.append(ul)
@@ -97,29 +87,11 @@ function renderQuestions(question) {
   correctLi.classList.add("correct-answer")
   correctLi.innerText = question.correct_answer
   innerUl.append(correctLi)
-  // incorrectAnswersArray.forEach(answer => {
-  //   const wrongLi = document.createElement("li")
-  //   wrongLi.classList.add("incorrect-answer")
-    // wrongLi.innerText = answer
-    // innerUl.append(wrongLi)
-  
-  // incorrectAnswersArray.forEach(function (answer) {
-  //   const wrongLi = document.createElement("li")
-  //   wrongLi.classList.add("incorrect-answer")
-  //   wrongLi.innerText = answer
-  //   innerUl.append(wrongLi)
-  
 
-  // const correctLi = document.createElement("li")
-  // correctLi.classList.add("correct-answer")
-  // // correctLi.innerText = question.correct_answer
-  // // correctLi.innerText = question.map(function(x){ return x.correct_answer;})
-  // // question.map(function(x){ return x.correct_answer;})
-  // innerUl.append(correctLi)
   li.append(innerUl)
-
+  // debugger
   const correct = document.querySelector(".correct-answer")
-  // correct.addEventListener("click", (event) => submitAnswer(event, question))
+
   correct.addEventListener("click", (event) => submitAnswer(event, question))
 
   const incorrect = document.querySelectorAll(".incorrect-answer")
@@ -128,8 +100,8 @@ function renderQuestions(question) {
 
 function incorrectAns(event){
   event.preventDefault()
+  debugger
   console.log("Success!")
-
   //next question
 }
 
