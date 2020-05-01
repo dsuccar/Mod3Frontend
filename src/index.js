@@ -1,30 +1,63 @@
 const BASE_URL = "http://localhost:3000"
 const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
+const USERS_URL = `${BASE_URL}/users`
+
+userId = 1
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchQuestions()
+  // fetchQuestion()
   // fetchUserQuestions()
 })
 
 function fetchQuestions() {
+  console.log("Loading questions")
   fetch(QUESTIONS_URL)
     .then(resp => resp.json())
-    .then(questionsArr => questionsArr.forEach(question => renderQuestions(question))
-    )
+    .then(questionsArr => renderMain(questionsArr))
+    // .then(console.log)
+    // .then(questionsArr => questionsArr.forEach(question => renderQuestions(question))
+    
 }
 
-function renderQuestions(question) {
-  const container = document.querySelector("main"),
-    ul = document.querySelector(".questions-list"),
+function fetchQuestion() {
+  fetch(`QUESTIONS_URL/${id}`)
+    .then(resp => resp.json())
+    .then(console.log)
+    // .then(question => renderQuestion(question))
+    
+}
+
+function renderMain(questions){
+  const h1 = document.createElement("h1")
+  h1.innerText = "Welcome! Click here to begin."
+  const main = document.querySelector(".main")
+  main.append(h1)
+  // debugger
+  //to fetch all questions
+  // fetch(QUESTIONS_URL).then(resp => resp.json())
+  // .then(console.log)
+  //to fetch all users
+  // debugger
+  h1.addEventListener("click", () => renderQuestion(questions[0]))
+}
+
+
+function renderQuestion(question) {
+  console.log("Rendering question for user")
+  const h1 = document.querySelector("h1")
+  h1.style.display = "none"
+  const container = document.querySelector("main")
+  const ul = document.querySelector(".questions-list")
     // div = document.createElement("div"),
-    li = document.createElement("li")
+  const li = document.createElement("li")
   li.innerText = question.question_text
 
   let startArr = []
   startArr = question.incorrect_answers
   // wrongAnswers = wrongAnswers.substring(0, wrongAnswers.length -1)
-
+  // debugger
   let wrongAnswers = JSON.parse("[" + startArr + "]")
 
   console.log(wrongAnswers)
@@ -40,18 +73,14 @@ function renderQuestions(question) {
 
   finalArr.forEach(function (answer) {
     const wrongLi = document.createElement("li")
-    wrongLi.classList.add("answer")
+    // wrongLi.classList.add("wrong-answer")
+    wrongLi.classList.add("incorrect-answer")
     wrongLi.innerText = answer
     innerUl.append(wrongLi)
   })
 
-  // wizards.forEach(function (wizard) {
-  //   var li = document.createElement('li');
-  //   li.textContent = wizard;
-  //   list.appendChild(li);
-  // });
-
   const correctLi = document.createElement("li")
+  // correctLi.classList.add("correct-answer")
   correctLi.classList.add("correct-answer")
   correctLi.innerText = question.correct_answer
   innerUl.append(correctLi)
@@ -61,26 +90,23 @@ function renderQuestions(question) {
   const correct = document.querySelector(".correct-answer")
   correct.addEventListener("click", (event) => submitAnswer(event, question))
 
-//   document.querySelectorAll(".answer").forEach(item => {
-//     item.addEventListener("click", (event) => submitAnswer(event, question)
-//     )
-//   }
-//   )
-
+  const incorrect = document.querySelectorAll(".incorrect-answer")
+  incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
 }
-// document.querySelectorAll('.some-class').forEach(item => {
-//   item.addEventListener('click', event => {
-//     //handle click
-//   })
-// })
+
+function incorrectAns(event){
+  console.log("Success!")
+  //next question
+}
+
 function submitAnswer(event, question) {
   event.preventDefault()
   console.log("submitting")
   if (event.target.innerText === question.correct_answer) {
 
     obj = {
-      question_id: question.id
-
+      question_id: question.id,
+      user_id: userId
     }
 
     fetch(USERQUESTIONS_URL, {
@@ -99,34 +125,55 @@ function submitAnswer(event, question) {
   else {
     console.log("nope")
   }
+  //next question
 }
 
-// .then(resp => resp.json())
-// .then(pokemon => { 
-//   const ul = event.target.nextElementSibling
-//   renderPokemons(pokemon,ul)
-// } )
-
-  // wizards.forEach(function (wizard) {
-  //   var li = document.createElement('li');
-  //   li.textContent = wizard;
-  //   list.appendChild(li);
-  // });
-
-  // const correctLi = document.createElement("li")
-  // correctLi.innerText = question.correct_answer
-  // innerUl.classList.add("innerUl")
-  // innerUl.append(correctLi)
-  // li.append(innerUl)
-  // ul.append(li)
 
 
-// create_table "questions", force: :cascade do |t|
-// t.string "question_text"
-// t.string "correct_answer"
-// t.string "incorrect_answers"
-// t.datetime "created_at", precision: 6, null: false
-// t.datetime "updated_at", precision: 6, null: false
-// end
+// function renderQuestions(question) {
+//   const container = document.querySelector("main"),
+//     ul = document.querySelector(".questions-list"),
+//     // div = document.createElement("div"),
+//     li = document.createElement("li")
+//   li.innerText = question.question_text
 
+//   let startArr = []
+//   startArr = question.incorrect_answers
+//   // wrongAnswers = wrongAnswers.substring(0, wrongAnswers.length -1)
 
+//   let wrongAnswers = JSON.parse("[" + startArr + "]")
+
+//   console.log(wrongAnswers)
+
+//   let newArr = []
+//   for (i = 0; i < wrongAnswers.length; i++) {
+//     newArr.push(wrongAnswers[i])
+//   }
+
+//   const innerUl = document.createElement("ul")
+//   innerUl.classList.add("innerUl")
+//   finalArr = newArr[0]
+
+//   finalArr.forEach(function (answer) {
+//     const wrongLi = document.createElement("li")
+//     wrongLi.classList.add("answer")
+//     wrongLi.innerText = answer
+//     innerUl.append(wrongLi)
+//   })
+
+//   const correctLi = document.createElement("li")
+//   correctLi.classList.add("correct-answer")
+//   correctLi.innerText = question.correct_answer
+//   innerUl.append(correctLi)
+//   li.append(innerUl)
+//   ul.append(li)
+
+//   const correct = document.querySelector(".correct-answer")
+//   correct.addEventListener("click", (event) => submitAnswer(event, question))
+// }
+
+// document.querySelectorAll('.some-class').forEach(item => {
+//   item.addEventListener('click', event => {
+//     //handle click
+//   })
+// })
