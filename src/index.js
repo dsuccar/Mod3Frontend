@@ -2,22 +2,18 @@ const BASE_URL = "http://localhost:3000"
 const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
-
+let page = 1;
 userId = 1
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchQuestions()
-  // fetchQuestion()
-  // fetchUserQuestions()
 })
 
 function fetchQuestions() {
   console.log("Loading questions")
-  fetch(QUESTIONS_URL)
+  fetch(QUESTIONS_URL + `?_limit=1&_page=${page}`)
     .then(resp => resp.json())
     .then(questionsArr => renderMain(questionsArr))
-    // .then(console.log)
-    // .then(questionsArr => questionsArr.forEach(question => renderQuestions(question))
     
 }
 
@@ -35,12 +31,7 @@ function renderMain(questions){
   const main = document.querySelector(".main")
   main.append(h1)
   // debugger
-  //to fetch all questions
-  // fetch(QUESTIONS_URL).then(resp => resp.json())
-  // .then(console.log)
-  //to fetch all users
-  // debugger
-  h1.addEventListener("click", () => renderQuestion(questions[0]))
+  h1.addEventListener("click", () => renderQuestion(questions))
 }
 
 
@@ -54,12 +45,12 @@ function renderQuestion(question) {
   const li = document.createElement("li")
   li.innerText = question.question_text
 
-  let startArr = []
-  startArr = question.incorrect_answers
-  // wrongAnswers = wrongAnswers.substring(0, wrongAnswers.length -1)
-  // debugger
+  // let startArr = []
+  // startArr = question.incorrect_answers
+  let startArr = question.map(function(x){ return x.incorrect_answers;})
   let wrongAnswers = JSON.parse("[" + startArr + "]")
-
+  wrongAnswers = startArr
+  debugger
   console.log(wrongAnswers)
 
   let newArr = []
@@ -70,7 +61,7 @@ function renderQuestion(question) {
   const innerUl = document.createElement("ul")
   innerUl.classList.add("innerUl")
   finalArr = newArr[0]
-
+  debugger
   finalArr.forEach(function (answer) {
     const wrongLi = document.createElement("li")
     // wrongLi.classList.add("wrong-answer")
@@ -92,6 +83,7 @@ function renderQuestion(question) {
 
   const incorrect = document.querySelectorAll(".incorrect-answer")
   incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
+
 }
 
 function incorrectAns(event){
