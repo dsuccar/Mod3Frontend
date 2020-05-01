@@ -53,110 +53,77 @@ function renderQuestions(question) {
  
   console.log("Rendering question for user")
 
-  const submitButton = document.getElementById('submit');
-  const resultsContainer = document.getElementById('results');
+  const mainTitle = document.querySelector("h1")
 
+  mainTitle.style.display = "none"
 
-  const h1 = document.querySelector("h1")
+  const questionContainer = document.getElementById("question-container")
+  questionContainer.innerHTML = ""
+  const questionText = document.createElement("h3")
+  questionText.classList.add("question-text")
+  questionText.innerText = randomQuestion.question_text
 
-  h1.style.display = "none"
+  questionContainer.append(questionText)
+  
+  const answerContainer = document.createElement("div")
+  answerContainer.classList.add("answer-container")
+  questionContainer.append(answerContainer)
 
-  const div = document.getElementById("question-container")
-  div.innerHTML = ""
-  const ul = document.createElement("ul")
-  ul.classList.add("questions-ul")
-  const li = document.createElement("li")
-  li.innerText = randomQuestion.question_text
-  ul.append(li)
-  div.append(ul)
+  let rawAnswersArray = []
+  rawAnswersArray.push(randomQuestion.correct_answer)
 
-  startArr = randomQuestion.incorrect_answers
-
-  // let incorrectAnswers = question.map(function(x){ return x.incorrect_answers;})
-  const nestedIncorrectAnswersArray = JSON.parse("[" + startArr + "]")
+  let stringOfNestedWrongAnswersArray = randomQuestion.incorrect_answers
+  const nestedIncorrectAnswersArray = JSON.parse("[" + stringOfNestedWrongAnswersArray + "]")
   const incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
+  rawAnswersArray.push(incorrectAnswersArray)
+  let answersArr = rawAnswersArray.flat()
 
-  const innerUl = document.createElement("ul")
-  innerUl.classList.add("innerUl")
-
-  const wrongLi = document.createElement("li")
-  wrongLi.classList.add("incorrect-answer")
-  // debugger
-  for(let i = 0; i < incorrectAnswersArray.length; i++){
-    const wrongLi = document.createElement("li")
-    wrongLi.classList.add("incorrect-answer")
-    wrongLi.innerText = incorrectAnswersArray[i]
-    innerUl.append(wrongLi)
+  for(let i = 0; i < answersArr.length; i++){
+    const answer = document.createElement("div")
+    answer.classList.add("answer")
+    answer.innerText = answersArr[i]
+    answerContainer.append(answer)
   }
-
-  const correctLi = document.createElement("li")
-  correctLi.classList.add("correct-answer")
-  correctLi.innerText = randomQuestion.correct_answer
-  // correctLi.innerText = question[getRandomInt(randomQuestion)].correct_answer
-  innerUl.append(correctLi)
-
-  li.append(innerUl)
   // debugger
-  const correct = document.querySelector(".correct-answer")
 
-  correct.addEventListener("click", (event) => submitAnswer(event, randomQuestion))
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+  
+  
+  for (let i = answerContainer.children.length; i >= 0; i--) {
+        answerContainer.appendChild(answerContainer.children[getRandomInt(4)]);
+  }
+    
+  
 
-  const incorrect = document.querySelectorAll(".incorrect-answer")
-  incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
+  // so answers are on bottom
+
+  // const correctAnswers = document.createElement("div")
+  // correctAnswers.classList.add("correct-answer")
+  
+  // let startArr = randomQuestion.incorrect_answers
+  // const nestedIncorrectAnswersArray = JSON.parse("[" + startArr + "]")
+  // const incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
+
+  // for(let i = 0; i < incorrectAnswersArray.length; i++){
+  //   const incorrectAnswers = document.createElement("div")
+  //   incorrectAnswers.classList.add("incorrect-answer")
+  //   incorrectAnswers.innerText = incorrectAnswersArray[i]
+  //   questionContainer.append(incorrectAnswers)
+  // }
+
+  // correctAnswers.innerText = randomQuestion.correct_answer
+  // questionContainer.append(correctAnswers)
+
+  // const correct = document.querySelector(".correct-answer")
+  // correct.addEventListener("click", (event) => submitAnswer(event, randomQuestion))
+
+  // const incorrect = document.querySelectorAll(".incorrect-answer")
+  // incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
+
+  //above is so the answer is always on the bottom
 }
-
-// function renderQuestions(question) {
-//   console.log("Rendering question for user")
-//   debugger
-//   const quizContainer = document.getElementById('question-container');
-//   const submitButton = document.getElementById('submit');
-//   const resultsContainer = document.getElementById('results');
-
-
-//   const h1 = document.querySelector("h1")
-
-//   h1.style.display = "none"
-
-//   const div = document.getElementById("question-container")
-
-//   const ul = document.createElement("ul")
-//   ul.classList.add("questions-ul")
-//   const li = document.createElement("li")
-//   li.innerText = question.question_text
-//   ul.append(li)
-//   div.append(ul)
-//   startArr = question.incorrect_answers
-//   // let incorrectAnswers = question.map(function(x){ return x.incorrect_answers;})
-//   const nestedIncorrectAnswersArray = JSON.parse("[" + startArr + "]")
-//   const incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
-
-//   const innerUl = document.createElement("ul")
-//   innerUl.classList.add("innerUl")
-
-//   const wrongLi = document.createElement("li")
-//   wrongLi.classList.add("incorrect-answer")
-//   // debugger
-//   for(let i = 0; i < incorrectAnswersArray.length; i++){
-//     const wrongLi = document.createElement("li")
-//     wrongLi.classList.add("incorrect-answer")
-//     wrongLi.innerText = incorrectAnswersArray[i]
-//     innerUl.append(wrongLi)
-//   }
-
-//   const correctLi = document.createElement("li")
-//   correctLi.classList.add("correct-answer")
-//   correctLi.innerText = question.correct_answer
-//   innerUl.append(correctLi)
-
-//   li.append(innerUl)
-//   // debugger
-//   const correct = document.querySelector(".correct-answer")
-
-//   correct.addEventListener("click", (event) => submitAnswer(event, question))
-
-//   const incorrect = document.querySelectorAll(".incorrect-answer")
-//   incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
-// }
 
 function incorrectAns(event){
   event.preventDefault()
