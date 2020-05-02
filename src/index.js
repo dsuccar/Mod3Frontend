@@ -5,7 +5,7 @@ const USERS_URL = `${BASE_URL}/users`
 let page = 1;
 let userId = 1
 let globalPoints = 0
-
+// debugger
 function stringFixer1(string){
   return string.replace(/&quot;/g, "'")
 }
@@ -40,20 +40,60 @@ function fetchUsers(){
   .then(user => renderMain(user))
 }
 
-function renderMain(user){
+function fetchUser(user){
+  console.log("Fetching user")
+  fetch(`USERS_URL/${user.id}`)
+  .then(resp => resp.json())
+  .then(user => renderQuestion(user))
+}
+
+function renderMain(user){ //params = (user, inputted number?)
+  const mainPageContent = document.createElement("div")
+  mainPageContent.classList.add("mainPage")
   const h1 = document.createElement("h1")
   h1.innerText = "Welcome! Click here to begin."
   const main = document.querySelector(".main")
-
-  const p = document.createElement("p")
-  p.classList.add("leaderboard")
-  p.innerText = `${user[0].name}: ${user[0].user_questions.length} points`
   // debugger
+  // leaderboard
+  // sortedUser = user.sort((a, b) => b - a)
+  ul = document.createElement("ul")
+  ul.classList.add("leaderboard-scores")
+  for(let i = 0; i < user.length; i++){
+    const li = document.createElement("li")
+    li.classList.add("leaderboard")
+    li.innerText = `${user[i].name}: ${user[i].user_questions.length} points`
+    ul.append(li)
+  }
   const input = document.createElement("input")
-  input.placeholder = "Log in here..."
-  main.append(h1, p)
+  input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
+  const submitBtn = document.createElement("button")
+  submitBtn.innerText = "Login"
+  // input.append(submitBtn)
 
-  h1.addEventListener("click", () => fetchQuestions())
+  submitBtn.addEventListener("click", (event) => submitLogin(event, user) )
+  
+  main.append(mainPageContent)
+  mainPageContent.append(h1, ul, input, submitBtn)
+
+  // h1.addEventListener("click", () => fetchQuestions())
+  // submitBtn.addEventListener("click", () => fetchQuestions())
+}
+
+function submitLogin(event, user){
+  event.preventDefault()
+  
+  const obj = {
+    name: event.target.parentNode.children[2].value,
+    user_questions: user.user_questions
+  }
+
+  fetch(USERS_URL, {
+    method: "POST",
+    headers: {"Content-Type" : "application/json",
+      "Accept" : "application/json"},
+    body: JSON.stringify(obj)
+  })
+  fetchQuestions()
 }
 
 function renderQuestions(question) {
@@ -65,11 +105,9 @@ function renderQuestions(question) {
  
   console.log("Rendering question for user")
 
-  const mainTitle = document.querySelector("h1")
-  leaderboard = document.querySelector(".leaderboard")
+  const mainPage = document.querySelector(".mainPage")
 
-  mainTitle.style.display = "none"
-  leaderboard.style.display = "none"
+  mainPage.style.display = "none"
 
   const questionContainer = document.getElementById("question-container")
   questionContainer.innerHTML = ""
@@ -190,7 +228,7 @@ function incorrectAns(event){
 
 function submitAnswer(event, randomQuestion) {
   event.preventDefault()
-  
+  debugger
   const points = document.querySelector(".round-points")
   points.innerText = `Points: ${++globalPoints}`
 
