@@ -5,6 +5,7 @@ const USERS_URL = `${BASE_URL}/users`
 let page = 1;
 let userId = 1
 let globalPoints = 0
+let scores = false;
 
 function stringFixer1(string){
   return string.replace(/&quot;/g, "'")
@@ -70,7 +71,48 @@ function loginPage(users){
   const submitBtn = document.createElement("button")
   submitBtn.innerText = "Login"
 
-  loginDiv.append(input, submitBtn)
+  const scoreContainer = document.createElement("div")
+  scoreContainer.classList.add("score-container")
+  const scoreContainerTitle = document.createElement("h3")
+  scoreContainerTitle.innerText = "Our users!"
+  // leaderboard
+  // sortedUser = user.sort((a, b) => b - a)
+  ul = document.createElement("ul")
+  ul.classList.add("leaderboard-scores")
+  for(let i = 0; i < users.length; i++){
+    const li = document.createElement("li")
+    li.classList.add("leaderboard")
+    li.innerText = `${users[i].name}: ${users[i].user_questions.length} points`
+    ul.append(li)
+  }
+  scoreContainerTitle.addEventListener("click", () => {
+    scores = !scores
+    if(scoreContainer){
+      scoreContainer.style.display = "block"
+    }else{
+      debugger
+      scoreContainer.style.display = "none"
+    }
+  })
+// document.addEventListener("DOMContentLoaded", () => {
+//   const addBtn = document.querySelector("#new-toy-btn");
+//   const toyForm = document.querySelector(".container");
+
+//   fetchToys();
+//   addBtn.addEventListener("click", () => {
+//     // hide & seek with the form
+//     addToy = !addToy
+//     if (addToy) {
+//       toyForm.style.display = "block";
+//     } else {
+//       toyForm.style.display = "none";
+//     }
+//   });
+//   toyForm.addEventListener("submit", submitForm);
+// });
+  scoreContainerTitle.append(scoreContainer)
+  scoreContainer.append(ul)
+  loginDiv.append(input, submitBtn, scoreContainerTitle)
   main.append(loginDiv)
   
   // event listener to call post request
@@ -101,16 +143,7 @@ function renderMain(user){ //params = (user, inputted number?)
   h1.innerText = "Welcome! Click here to begin."
   const main = document.querySelector(".main")
 
-  // leaderboard
-  // sortedUser = user.sort((a, b) => b - a)
-  // ul = document.createElement("ul")
-  // ul.classList.add("leaderboard-scores")
-  // for(let i = 0; i < user.length; i++){
-  //   const li = document.createElement("li")
-  //   li.classList.add("leaderboard")
-  //   li.innerText = `${user[i].name}: ${user[i].user_questions.length} points`
-  //   ul.append(li)
-  // }
+
   // const input = document.createElement("input")
   // input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
   // const submitBtn = document.createElement("button")
@@ -120,7 +153,7 @@ function renderMain(user){ //params = (user, inputted number?)
   // submitBtn.addEventListener("click", (event) => submitLogin(event, user) )
   
   main.append(mainPageContent)
-  mainPageContent.append(h1)//, ul)
+  mainPageContent.append(h1)
 
   h1.addEventListener("click", () => fetchQuestions(user))
   // submitBtn.addEventListener("click", () => fetchQuestions())
