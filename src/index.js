@@ -5,7 +5,7 @@ const USERS_URL = `${BASE_URL}/users`
 let page = 1;
 let userId = 1
 let globalPoints = 0
-// debugger
+
 function stringFixer1(string){
   return string.replace(/&quot;/g, "'")
 }
@@ -25,26 +25,73 @@ document.addEventListener("DOMContentLoaded", () => {
   // addListeners()
 })
 
-function fetchQuestions() {
+function fetchQuestions(user) {
   console.log("Loading questions")
   fetch(QUESTIONS_URL)// + `?_limit=1&_page=${page}`) // may need return on this line
     .then(resp => resp.json())
-    .then(question => renderQuestions(question))
+    .then(question => renderQuestions(question, user))
     // .then(json => json.forEach(question => renderQuestions(question)))
 }
+
+// function fetchUsers(){
+//   console.log("Retrieving Danny's total score")
+//   fetch(USERS_URL)
+//   .then(resp => resp.json())
+//   .then(user => console.log(user))
+// }
+
+// function fetchUser(user){
+//   console.log("Fetching user")
+//   fetch(`USERS_URL/${user.id}`)
+//   .then(resp => resp.json())
+//   .then(user => renderQuestion(user))
+// }
+
+//login page - renders all users
+//render login. fetch request to fetchUsers which renders rendersMain
+//renderMain only takes 1 user
+
+//every other page - renders one user
 
 function fetchUsers(){
   console.log("Retrieving Danny's total score")
   fetch(USERS_URL)
   .then(resp => resp.json())
-  .then(user => renderMain(user))
+  .then(users => loginPage(users))
 }
 
-function fetchUser(user){
-  console.log("Fetching user")
-  fetch(`USERS_URL/${user.id}`)
-  .then(resp => resp.json())
-  .then(user => renderQuestion(user))
+function loginPage(users){
+  const main = document.querySelector(".main")
+  const loginDiv = document.createElement("div")
+  loginDiv.classList.add("login-container")
+
+  const input = document.createElement("input")
+  input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
+  const submitBtn = document.createElement("button")
+  submitBtn.innerText = "Login"
+
+  loginDiv.append(input, submitBtn)
+  main.append(loginDiv)
+  
+  // event listener to call post request
+  submitBtn.addEventListener("click", (event) => submitLogin(event) )
+}
+
+function submitLogin(event){
+  event.preventDefault()
+
+  const obj = {
+    name: event.target.parentNode.children[0].value
+    // user_questions: user.user_questions
+  }
+
+  fetch(USERS_URL, {
+    method: "POST",
+    headers: {"Content-Type" : "application/json",
+      "Accept" : "application/json"},
+    body: JSON.stringify(obj)
+  }).then(resp => resp.json()).then(user => renderMain(user))
+  // fetchQuestions()
 }
 
 function renderMain(user){ //params = (user, inputted number?)
@@ -53,61 +100,47 @@ function renderMain(user){ //params = (user, inputted number?)
   const h1 = document.createElement("h1")
   h1.innerText = "Welcome! Click here to begin."
   const main = document.querySelector(".main")
-  // debugger
+
   // leaderboard
   // sortedUser = user.sort((a, b) => b - a)
-  ul = document.createElement("ul")
-  ul.classList.add("leaderboard-scores")
-  for(let i = 0; i < user.length; i++){
-    const li = document.createElement("li")
-    li.classList.add("leaderboard")
-    li.innerText = `${user[i].name}: ${user[i].user_questions.length} points`
-    ul.append(li)
-  }
-  const input = document.createElement("input")
-  input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
-  const submitBtn = document.createElement("button")
-  submitBtn.innerText = "Login"
+  // ul = document.createElement("ul")
+  // ul.classList.add("leaderboard-scores")
+  // for(let i = 0; i < user.length; i++){
+  //   const li = document.createElement("li")
+  //   li.classList.add("leaderboard")
+  //   li.innerText = `${user[i].name}: ${user[i].user_questions.length} points`
+  //   ul.append(li)
+  // }
+  // const input = document.createElement("input")
+  // input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
+  // const submitBtn = document.createElement("button")
+  // submitBtn.innerText = "Login"
   // input.append(submitBtn)
 
-  submitBtn.addEventListener("click", (event) => submitLogin(event, user) )
+  // submitBtn.addEventListener("click", (event) => submitLogin(event, user) )
   
   main.append(mainPageContent)
-  mainPageContent.append(h1, ul, input, submitBtn)
+  mainPageContent.append(h1)//, ul)
 
-  // h1.addEventListener("click", () => fetchQuestions())
+  h1.addEventListener("click", () => fetchQuestions(user))
   // submitBtn.addEventListener("click", () => fetchQuestions())
 }
 
-function submitLogin(event, user){
-  event.preventDefault()
-  
-  const obj = {
-    name: event.target.parentNode.children[2].value,
-    user_questions: user.user_questions
-  }
-
-  fetch(USERS_URL, {
-    method: "POST",
-    headers: {"Content-Type" : "application/json",
-      "Accept" : "application/json"},
-    body: JSON.stringify(obj)
-  })
-  fetchQuestions()
-}
-
-function renderQuestions(question) {
+function renderQuestions(question, user) {
   globalQuestion = question //intentional global variable
   const points = document.querySelector(".round-points")
   points.innerText = `Points: ${globalPoints}`
 
   let randomQuestion = question[Math.floor(Math.random() * question.length)]//Math.floor(Math.random() * Math.floor(max));
- 
+
   console.log("Rendering question for user")
 
   const mainPage = document.querySelector(".mainPage")
-
   mainPage.style.display = "none"
+  
+  const loginContainer = document.querySelector(".login-container")
+
+  loginContainer.style.display = "none"
 
   const questionContainer = document.getElementById("question-container")
   questionContainer.innerHTML = ""
@@ -150,7 +183,7 @@ function renderQuestions(question) {
     answer.classList.add("answer")
     answer.innerText = answersArr[i]
     answerContainer.append(answer)
-    if(answersArr[i] === randomQuestion.correct_answer) {
+    if(answersArr[i] === dataCorrect) {
       answer.setAttribute("id", "correct-answer")
     }else{
       answer.setAttribute("id", "incorrect-answer")
@@ -163,23 +196,15 @@ function renderQuestions(question) {
   
   
   for (let i = answerContainer.children.length; i >= 0; i--) {
-    // debugger
+    // 
         answerContainer.appendChild(answerContainer.children[getRandomInt(answersArr.length)]); //4
   }
 
   const correct = document.getElementById("correct-answer")
-  correct.addEventListener("click", (event) => submitAnswer(event, randomQuestion))
+  correct.addEventListener("click", (event) => submitAnswer(event, randomQuestion, user))
 
   const incorrect = document.querySelectorAll("#incorrect-answer")
-  incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
-
-  // debugger
-  // const correct = document.querySelector(".correct-answer")
-  // 
-
-  // const incorrect = document.querySelectorAll(".incorrect-answer")
-  // incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
-
+  incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event, user))})
 
   // so answers are on bottom
 
@@ -209,7 +234,7 @@ function renderQuestions(question) {
   //above is so the answer is always on the bottom
 }
 
-function incorrectAns(event){
+function incorrectAns(event, user){
   event.preventDefault()
 
   const bigGreenCheckmark = document.querySelector(".big-green-checkmark")
@@ -223,12 +248,12 @@ function incorrectAns(event){
 
   console.log("Success!")
   //next question
-  renderQuestions(globalQuestion)
+  renderQuestions(globalQuestion, user)
 }
 
-function submitAnswer(event, randomQuestion) {
+function submitAnswer(event, randomQuestion, user) {
   event.preventDefault()
-  debugger
+
   const points = document.querySelector(".round-points")
   points.innerText = `Points: ${++globalPoints}`
 
@@ -243,9 +268,10 @@ function submitAnswer(event, randomQuestion) {
   console.log("submitting")
 
     // alert("Correct Answer!")
+
     obj = {
       question_id: randomQuestion.id,
-      user_id: userId
+      user_id: user.id //used to be hardcoded to always be DannyTwoThumbs.
     }
 
     fetch(USERQUESTIONS_URL, {
@@ -256,5 +282,5 @@ function submitAnswer(event, randomQuestion) {
       },
       body: JSON.stringify(obj)
     })
-    renderQuestions(globalQuestion)
+    renderQuestions(globalQuestion, user)
 }
