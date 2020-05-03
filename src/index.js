@@ -5,54 +5,56 @@ const USERS_URL = `${BASE_URL}/users`
 let page = 1;
 let userId = 1
 let globalPoints = 0
-let scores = false;
+let timeLeft = 3
+let count = 6
 
-function stringFixer1(string){
-  return string.replace(/&quot;/g, "'")
+function stringFixer(string){
+  const string2 = string.replace(/&quot;/g, "'")
+  const string3 = string2.replace(/&#039;/g, "'")
+  const string4 = string3.replace(/&amp/g, "&")
+  const string5 = string4.replace(/&eacute;/g, "e")
+  const string6 = string5.replace(/&aacute;/g, "a")
+  const string7 = string6.replace(/Llanfair&shy;/g, "Llanfair")
+  const string8 = string7.replace(/pwllgwyngyll&shy;/g, "pwllgwyngyll")
+  const string9 = string8.replace(/gogery&shy;/g, "gogery")
+  const string10 = string9.replace(/chwyrn&shy;/g, "chwyrn")
+  const string11 = string10.replace(/drobwll&shy;/g, "drobwll")
+  const string12 = string11.replace(/llan&shy;/g, "llan")
+  const string13 = string12.replace(/silio&shy;/g, "silio")
+  const string14 = string13.replace(/gogo&shy;/g, "gogo")
+  return string14
 }
 
-function stringFixer2(string){
-  return string.replace(/&#039;/g, "'")
-}
-
-function stringFixer3(string){
-  return string.replace(/&amp/g, "&")
+function timer(){
+  span = document.getElementById("timer")
+  let counter = setInterval(timer, 1000); //timer decrements every second
+  // clearInterval(counter);
+  count = count - 1;
+  if(count <= 0)
+  {
+    // count = count - 1;
+    clearInterval(counter);
+    //counter ended, do something here
+    // return
+  }
+  if(count === 0){
+    // clearInterval(counter)
+    alert("Time's up!")
+  }
+  // document.getElementById("timer").innerHTML="Time left: " + count
+  span.innerHTML="Time left: " + count
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // fetchQuestions()
   fetchUsers()
-  // renderMain()
-  // addListeners()
 })
 
 function fetchQuestions(user) {
   console.log("Loading questions")
-  fetch(QUESTIONS_URL)// + `?_limit=1&_page=${page}`) // may need return on this line
+  fetch(QUESTIONS_URL)
     .then(resp => resp.json())
     .then(question => renderQuestions(question, user))
-    // .then(json => json.forEach(question => renderQuestions(question)))
 }
-
-// function fetchUsers(){
-//   console.log("Retrieving Danny's total score")
-//   fetch(USERS_URL)
-//   .then(resp => resp.json())
-//   .then(user => console.log(user))
-// }
-
-// function fetchUser(user){
-//   console.log("Fetching user")
-//   fetch(`USERS_URL/${user.id}`)
-//   .then(resp => resp.json())
-//   .then(user => renderQuestion(user))
-// }
-
-//login page - renders all users
-//render login. fetch request to fetchUsers which renders rendersMain
-//renderMain only takes 1 user
-
-//every other page - renders one user
 
 function fetchUsers(){
   console.log("Retrieving Danny's total score")
@@ -64,21 +66,25 @@ function fetchUsers(){
 function loginPage(users){
   const main = document.querySelector(".main")
   const loginDiv = document.createElement("div")
-  loginDiv.classList.add("login-container")
+  loginDiv.setAttribute("id", "login-container")
 
   const input = document.createElement("input")
-  input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
+  input.placeholder = "Log in here..." 
   const submitBtn = document.createElement("button")
   submitBtn.innerText = "Login"
 
   const scoreContainer = document.createElement("div")
-  scoreContainer.classList.add("score-container")
+  scoreContainer.setAttribute("id", "score-container")
+
   const scoreContainerTitle = document.createElement("h3")
-  scoreContainerTitle.innerText = "Our users!"
+  scoreContainerTitle.setAttribute("id", "score-container-title")
+  scoreContainerTitle.innerText = "Click here to see our users"
+
   // leaderboard
+  scoreContainer.style.display = "none"
   // sortedUser = user.sort((a, b) => b - a)
   ul = document.createElement("ul")
-  ul.classList.add("leaderboard-scores")
+  ul.setAttribute("id", "leaderboard-scores")
   for(let i = 0; i < users.length; i++){
     const li = document.createElement("li")
     li.classList.add("leaderboard")
@@ -86,37 +92,19 @@ function loginPage(users){
     ul.append(li)
   }
   scoreContainerTitle.addEventListener("click", () => {
-    scores = !scores
-    if(scoreContainer){
+    if(scoreContainer.style.display === "none"){
       scoreContainer.style.display = "block"
-    }else{
-      debugger
+    }else if (scoreContainer.style.display = "block"){
       scoreContainer.style.display = "none"
     }
-  })
-// document.addEventListener("DOMContentLoaded", () => {
-//   const addBtn = document.querySelector("#new-toy-btn");
-//   const toyForm = document.querySelector(".container");
+  });
 
-//   fetchToys();
-//   addBtn.addEventListener("click", () => {
-//     // hide & seek with the form
-//     addToy = !addToy
-//     if (addToy) {
-//       toyForm.style.display = "block";
-//     } else {
-//       toyForm.style.display = "none";
-//     }
-//   });
-//   toyForm.addEventListener("submit", submitForm);
-// });
   scoreContainerTitle.append(scoreContainer)
   scoreContainer.append(ul)
   loginDiv.append(input, submitBtn, scoreContainerTitle)
   main.append(loginDiv)
   
-  // event listener to call post request
-  submitBtn.addEventListener("click", (event) => submitLogin(event) )
+  submitBtn.addEventListener("click", (event) => submitLogin(event) ) //log in
 }
 
 function submitLogin(event){
@@ -133,77 +121,70 @@ function submitLogin(event){
       "Accept" : "application/json"},
     body: JSON.stringify(obj)
   }).then(resp => resp.json()).then(user => renderMain(user))
-  // fetchQuestions()
 }
 
-function renderMain(user){ //params = (user, inputted number?)
+function renderMain(user){
   const mainPageContent = document.createElement("div")
-  mainPageContent.classList.add("mainPage")
+  mainPageContent.setAttribute("id", "main-page")
+
   const h1 = document.createElement("h1")
   h1.innerText = "Welcome! Click here to begin."
+
   const main = document.querySelector(".main")
 
+  const loginContainer = document.getElementById("login-container")
+  loginContainer.style.display = "none"
 
-  // const input = document.createElement("input")
-  // input.placeholder = "Log in here..." //build login function instead. then attach render main to an event listener
-  // const submitBtn = document.createElement("button")
-  // submitBtn.innerText = "Login"
-  // input.append(submitBtn)
-
-  // submitBtn.addEventListener("click", (event) => submitLogin(event, user) )
-  
+  const span = document.createElement("span")
+  span.setAttribute("id", "timer")
+  h1.append(span)
   main.append(mainPageContent)
   mainPageContent.append(h1)
 
-  h1.addEventListener("click", () => fetchQuestions(user))
+  // h1.addEventListener("click", () => fetchQuestions(user))
+  h1.addEventListener("click", () => timer())
   // submitBtn.addEventListener("click", () => fetchQuestions())
 }
 
 function renderQuestions(question, user) {
-  globalQuestion = question //intentional global variable
+  globalQuestion = question //intentional global variable to allow incorrectAns and correctAns functions to run
   const points = document.querySelector(".round-points")
   points.innerText = `Points: ${globalPoints}`
 
   let randomQuestion = question[Math.floor(Math.random() * question.length)]//Math.floor(Math.random() * Math.floor(max));
 
   console.log("Rendering question for user")
-
-  const mainPage = document.querySelector(".mainPage")
+  const mainPage = document.getElementById("main-page")
   mainPage.style.display = "none"
   
-  const loginContainer = document.querySelector(".login-container")
-
+  const loginContainer = document.getElementById("login-container")
   loginContainer.style.display = "none"
 
   const questionContainer = document.getElementById("question-container")
   questionContainer.innerHTML = ""
   const questionText = document.createElement("h3")
   questionText.classList.add("question-text")
-  let dataText3 = randomQuestion.question_text
-  console.log(dataText3) //string
-  
-  let dataText2 = stringFixer1(dataText3)
-  let dataText = stringFixer2(dataText2)
+
+  let rawQuestionText = randomQuestion.question_text
+  let dataText = stringFixer(rawQuestionText)
+  console.log(dataText) //string
+
   questionText.innerText = dataText
-  // questionText.innerText = randomQuestion.question_text
 
   questionContainer.append(questionText)
   
   const answerContainer = document.createElement("div")
-  answerContainer.classList.add("answer-container")
+  answerContainer.setAttribute("id", "answer-container")
   questionContainer.append(answerContainer)
 
-  let dataCorrect3 = randomQuestion.correct_answer
-  let dataCorrect2 = stringFixer1(dataCorrect3)
-  let dataCorrect = stringFixer2(dataCorrect2)
+  let rawCorrectAnswer = randomQuestion.correct_answer
+  let dataCorrect = stringFixer(rawCorrectAnswer)
   let rawAnswersArray = []
   rawAnswersArray.push(dataCorrect)
-  // rawAnswersArray.push(randomQuestion.correct_answer)
 
   let stringOfNestedWrongAnswersArray = randomQuestion.incorrect_answers
-  let dataIncorrect3 = stringOfNestedWrongAnswersArray
-  let dataIncorrect2 = stringFixer1(dataIncorrect3)
-  let dataIncorrect = stringFixer2(dataIncorrect2)
+  let rawIncorrectAnswer = stringOfNestedWrongAnswersArray
+  let dataIncorrect = stringFixer(rawIncorrectAnswer)
 
   nestedIncorrectAnswersArray = JSON.parse("[" + dataIncorrect + "]")
   incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
@@ -227,44 +208,15 @@ function renderQuestions(question, user) {
     return Math.floor(Math.random() * Math.floor(max));
   }
   
-  
   for (let i = answerContainer.children.length; i >= 0; i--) {
-    // 
         answerContainer.appendChild(answerContainer.children[getRandomInt(answersArr.length)]); //4
   }
 
   const correct = document.getElementById("correct-answer")
-  correct.addEventListener("click", (event) => submitAnswer(event, randomQuestion, user))
+  correct.addEventListener("click", (event) => correctAns(event, randomQuestion, user))
 
   const incorrect = document.querySelectorAll("#incorrect-answer")
   incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event, user))})
-
-  // so answers are on bottom
-
-  // const correctAnswers = document.createElement("div")
-  // correctAnswers.classList.add("correct-answer")
-  
-  // let startArr = randomQuestion.incorrect_answers
-  // const nestedIncorrectAnswersArray = JSON.parse("[" + startArr + "]")
-  // const incorrectAnswersArray = nestedIncorrectAnswersArray.flat()
-
-  // for(let i = 0; i < incorrectAnswersArray.length; i++){
-  //   const incorrectAnswers = document.createElement("div")
-  //   incorrectAnswers.classList.add("incorrect-answer")
-  //   incorrectAnswers.innerText = incorrectAnswersArray[i]
-  //   questionContainer.append(incorrectAnswers)
-  // }
-
-  // correctAnswers.innerText = randomQuestion.correct_answer
-  // questionContainer.append(correctAnswers)
-
-  // const correct = document.querySelector(".correct-answer")
-  // correct.addEventListener("click", (event) => submitAnswer(event, randomQuestion))
-
-  // const incorrect = document.querySelectorAll(".incorrect-answer")
-  // incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event))})
-
-  //above is so the answer is always on the bottom
 }
 
 function incorrectAns(event, user){
@@ -273,18 +225,17 @@ function incorrectAns(event, user){
   const bigGreenCheckmark = document.querySelector(".big-green-checkmark")
   bigGreenCheckmark.innerText = ""
 
-  // const previousQuestion = event.target.parentNode.parentNode
   const h2 = document.querySelector("h2")
   const redX = document.querySelector(".big-red-x")
   redX.innerText = "❌"
   h2.append(redX)
 
   console.log("Success!")
-  //next question
-  renderQuestions(globalQuestion, user)
+
+  renderQuestions(globalQuestion, user) //render next question
 }
 
-function submitAnswer(event, randomQuestion, user) {
+function correctAns(event, randomQuestion, user) {
   event.preventDefault()
 
   const points = document.querySelector(".round-points")
