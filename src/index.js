@@ -3,7 +3,8 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 600
+let count = 6
+// let time
 // const timer = document.createElement("span")
 // timer.setAttribute("id", "timer")
 
@@ -13,7 +14,7 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   const string4 = string3.replace(/&amp/g, "&")
   const string5 = string4.replace(/&eacute;/g, "é")
   const string6 = string5.replace(/&aacute;/g, "á")
-  const string7 = string6.replace(/Llanfair&shy;/g, "Llanfair") //string7 to string14 is for the long welsh name. putting them all together inside one //g made the result look strange
+  const string7 = string6.replace(/Llanfair&shy;/g, "Llanfair") //string17 to string24 is for the long welsh name. putting them all together inside one //g made the result look strange
   const string8 = string7.replace(/pwllgwyngyll&shy;/g, "pwllgwyngyll")
   const string9 = string8.replace(/gogery&shy;/g, "gogery")
   const string10 = string9.replace(/chwyrn&shy;/g, "chwyrn")
@@ -25,8 +26,13 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   return string15
 }
 
-// function timeLeft(){ //putting this inside a function is the same as below effect
+function timeLeft(user){ //putting this inside a function is the same as below effect
   // const timeLeft = setInterval(function(){ //global variable that includes an anonymous function
+  
+  function stopTimer(){
+    clearInterval(time)
+  }
+  
   const time = setInterval(function(){ //can give it name by doing function <name>(){
     // const timer = document.createElement("span")
     // timer.setAttribute("id", "timer")
@@ -36,22 +42,13 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
     count -= 1
     timer.innerText = "Time left: " + count //commenting this out means time is always undefined
     if(count === 0){
-      gameOver()
+      stopTimer()
+      gameOver(user)
     }
-  }, 1000) 
+  }, 1000)
+  return time
 //the problem here is visible when you open console inside of webpage
-
-// function timeLeft(){ 
-//   const timer = document.getElementById("timer")
-//   count -= 1
-//   timer.innerHTML="Time left: " + count
-//   if(count < 0){
-//     setInterval(timeLeft, 1000)
-//   }
-//   else if(count === 0){
-//     gameOver()
-//   }
-// }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchUsers()
@@ -116,7 +113,7 @@ function loginPage(users){
 }
 
 function submitLogin(event){
-  event.preventDefault()
+  // event.preventDefault()
 
   const obj = {
     name: event.target.parentNode.children[0].value
@@ -132,8 +129,15 @@ function submitLogin(event){
 }
 
 function renderMain(user){
+  const gameOverMessage = document.createElement("h1")
+  // const gameOverMessage = document.querySelector("h1")
+  gameOverMessage.innerHTML = ""
+  // const main = document.querySelector(".main")
+  // main.innerText = ""
+  // event.preventDefault()
   const mainPageContent = document.createElement("div")
   mainPageContent.setAttribute("id", "main-page")
+
 
   const h1 = document.createElement("h1")
   h1.innerText = "Welcome! Click here to begin."
@@ -146,9 +150,9 @@ function renderMain(user){
   main.append(mainPageContent)
   mainPageContent.append(h1)
 
-  // h1.addEventListener("click", () => timeLeft(), fetchQuestions(user)) //count usually decrements only once here and doesn't let you click on event listener. it automatically activates
+  h1.addEventListener("click", () => (timeLeft(user), fetchQuestions(user))) //count usually decrements only once here and doesn't let you click on event listener. it automatically activates
   // h1.addEventListener("click", () => timeLeft, fetchQuestions(user)) // does nothing
-  h1.addEventListener("click", () => fetchQuestions(user))
+  // h1.addEventListener("click", () => fetchQuestions(user))
   // h1.addEventListener("click", () => timeLeft())
 } //figure out how to add event listener for timer here?
 
@@ -284,15 +288,29 @@ function correctAns(event, randomQuestion, user) {
     renderQuestions(globalQuestion, user)
 }
 
-function gameOver(){
+function gameOver(user){
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
   questionContainer.style.display = "none"
 
-  const gameOverMessage = document.createElement("h1")
+  // const gameOverMessage = document.createElement("h1")
+  const gameOverMessage = document.querySelector("h1")
   gameOverMessage.innerText = "Game Over!"
 
   const restart = document.createElement("h3")
   restart.innerText = "Would you like to try again?"
+
+  yesBtn = document.createElement("button")
+  yesBtn.setAttribute("id", "yes-btn")
+  yesBtn.innerText = "Yes"
+
+  noBtn = document.createElement("button")
+  noBtn.setAttribute("id", "no-btn")
+  noBtn.innerText = "No"
+  
   main.append(gameOverMessage, restart)
+  restart.append(yesBtn,noBtn)
+  
+  yesBtn.addEventListener("click", (event) => submitLogin(event))
+  noBtn.addEventListener("click", (event) => fetchUsers(event))
 }
