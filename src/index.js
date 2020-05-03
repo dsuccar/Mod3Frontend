@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-// let count = 600
+let count = 6
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -51,6 +51,21 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   // }, 1000)
 //   return time
 // }
+function timeLeft(user){
+  function stopTimer(){
+    clearInterval(timer)
+  }
+const timer = setInterval(function(){
+  count -= 1
+  stopwatch = document.getElementById("timer")
+  stopwatch.innerText = "Time left: " + count
+
+if(count === 0){
+  stopTimer()
+  gameOver(user)
+  count = 6
+} },1000)
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchUsers()
@@ -176,13 +191,27 @@ function renderMain(user){
   main.append(mainPageContent)
   mainPageContent.append(h1)
 
-  // h1.addEventListener("click", () => (timeLeft(user), fetchQuestions(user))) //count usually decrements only once here and doesn't let you click on event listener. it automatically activates
+  h1.addEventListener("click", () => (timeLeft(user), fetchQuestions(user))) //count usually decrements only once here and doesn't let you click on event listener. it automatically activates
   // h1.addEventListener("click", () => timeLeft, fetchQuestions(user)) // does nothing
-  h1.addEventListener("click", () => fetchQuestions(user))
+  // h1.addEventListener("click", () => fetchQuestions(user))
   // h1.addEventListener("click", () => timeLeft())
 } //figure out how to add event listener for timer here?
 
 function renderQuestions(question, user){
+  const stopwatch = document.createElement("span")
+  stopwatch.setAttribute("id", "timer")
+  // setInterval(function(){
+  //   count -= 1
+  //   stopwatch.innerText = "Time left: " + count
+  // function stopTimer(){
+  //   clearInterval(count)
+  // }
+  // if(count === 0){
+  //   stopTimer()
+  //   gameOver(user)
+  //   count = 6
+  // } },1000)
+
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
   scoreCheckX[i].style.display = "block"
@@ -224,7 +253,7 @@ function renderQuestions(question, user){
 
   questionText.innerText = dataText
 
-  questionContainer.append(questionText)
+  questionContainer.append(questionText, stopwatch)
   
   const answerContainer = document.createElement("div")
   answerContainer.setAttribute("id", "answer-container")
