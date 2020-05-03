@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 6
+let count = 600
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -24,12 +24,12 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
 }
 
 // function timeLeft(){ //putting this inside a function is the same as below effect
-  // const timeLeft = setInterval(function(){ //global variable that include what I think is called an anonymous function
-    const time = setInterval(function(){
-    const timer = document.getElementById("timer") //lines 27, 28, 30 look repetitive but it allows timer to decrement each sec
-    timer.innerText = 0; 
+  const timeLeft = setInterval(function(){ //global variable that include what I think is called an anonymous function
+    // const time = setInterval(function(){
+    const timer = document.getElementById("timer") //lines after this look repetitive but it allows timer to decrement each sec
+    timer.innerText = 0; //prevents timer from starting the moment you call renderMain
     count -= 1
-    timer.innerHTML = "Time left: " + count
+    timer.innerText = "Time left: " + count //commenting this out means time is always undefined
     if(count === 0){
       gameOver()
     }
@@ -54,6 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function fetchQuestions(user) {
   console.log("Loading questions")
+  // const timer = document.getElementById("timer")
+  // const timer = document.createElement("span")
+  // timer.setAttribute("id", "timer")
+  // timer.innerText = "Time left: " + count
   fetch(QUESTIONS_URL)
     .then(resp => resp.json())
     .then(question => renderQuestions(question, user))
@@ -148,7 +152,7 @@ function renderMain(user){
   // submitBtn.addEventListener("click", () => fetchQuestions())
 } //figure out how to add event listener for timer here?
 
-function renderQuestions(question, user, count) { //count allows us to start the countdown and have it persist
+function renderQuestions(question, user){
   globalQuestion = question //intentional global variable to allow incorrectAns and correctAns functions to run
   const points = document.querySelector(".round-points")
   points.innerText = `Points: ${globalPoints}`
@@ -229,7 +233,6 @@ function renderQuestions(question, user, count) { //count allows us to start the
 
 function incorrectAns(event, user){
   event.preventDefault()
-
   const bigGreenCheckmark = document.querySelector(".big-green-checkmark")
   bigGreenCheckmark.innerText = ""
 
