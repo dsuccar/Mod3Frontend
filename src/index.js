@@ -141,10 +141,26 @@ function loginPage(users){
 function submitLogin(event, users){
   // event.preventDefault()
   const input = document.querySelector("input")
-    if(users.includes(input.value)){
-    let existingUser = input.value
+  
+  let existingUser
+  let mappedUsers
+  function myFunc(user) {
+    return user.name
+  }
+  // debugger
+  if(Array.isArray(users) === true){
+  mappedUsers = users.map(myFunc)
+  }else{
+    mappedUsers = users
+  }
+  
+  if(!input){
+    existingUser = users
     renderMain(existingUser)
-    }else{
+  }else if (input.value !== null && mappedUsers.includes(input.value)){
+      existingUser = input.value
+      renderMain(existingUser)
+  }else{
     const obj = {
       name: event.target.parentNode.children[0].value
       // user_questions: user.user_questions
@@ -200,6 +216,7 @@ function renderMain(user){
 function renderQuestions(question, user){
   const stopwatch = document.createElement("span")
   stopwatch.setAttribute("id", "timer")
+  stopwatch.innerText = "Time left: " + count
   // setInterval(function(){
   //   count -= 1
   //   stopwatch.innerText = "Time left: " + count
@@ -392,6 +409,7 @@ function gameOver(user){
   main.append(gameOverMessage)
   
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), clickHereToBegin.remove(), submitLogin(event)))
-  yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event)))
+  // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event)))
+  yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event, user)))
   noBtn.addEventListener("click", (event) => (gameOverMessage.remove(), fetchUsers(event)))
 }
