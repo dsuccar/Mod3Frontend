@@ -4,6 +4,8 @@ const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
 let count = 600
+// const timer = document.createElement("span")
+// timer.setAttribute("id", "timer")
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -11,7 +13,7 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   const string4 = string3.replace(/&amp/g, "&")
   const string5 = string4.replace(/&eacute;/g, "é")
   const string6 = string5.replace(/&aacute;/g, "á")
-  const string7 = string6.replace(/Llanfair&shy;/g, "Llanfair")
+  const string7 = string6.replace(/Llanfair&shy;/g, "Llanfair") //string7 to string14 is for the long welsh name. putting them all together inside one //g made the result look strange
   const string8 = string7.replace(/pwllgwyngyll&shy;/g, "pwllgwyngyll")
   const string9 = string8.replace(/gogery&shy;/g, "gogery")
   const string10 = string9.replace(/chwyrn&shy;/g, "chwyrn")
@@ -24,10 +26,13 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
 }
 
 // function timeLeft(){ //putting this inside a function is the same as below effect
-  const timeLeft = setInterval(function(){ //global variable that include what I think is called an anonymous function
-    // const time = setInterval(function(){
-    const timer = document.getElementById("timer") //lines after this look repetitive but it allows timer to decrement each sec
+  // const timeLeft = setInterval(function(){ //global variable that includes an anonymous function
+  const time = setInterval(function(){ //can give it name by doing function <name>(){
+    // const timer = document.createElement("span")
+    // timer.setAttribute("id", "timer")
+    // const timer = document.getElementById("timer") //lines after this are repeated later but this section allows timer to decrement each sec
     timer.innerText = 0; //prevents timer from starting the moment you call renderMain
+    //you may need a begin/rescue somewhere in this function
     count -= 1
     timer.innerText = "Time left: " + count //commenting this out means time is always undefined
     if(count === 0){
@@ -54,10 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function fetchQuestions(user) {
   console.log("Loading questions")
-  // const timer = document.getElementById("timer")
-  // const timer = document.createElement("span")
-  // timer.setAttribute("id", "timer")
-  // timer.innerText = "Time left: " + count
   fetch(QUESTIONS_URL)
     .then(resp => resp.json())
     .then(question => renderQuestions(question, user))
@@ -149,7 +150,6 @@ function renderMain(user){
   // h1.addEventListener("click", () => timeLeft, fetchQuestions(user)) // does nothing
   h1.addEventListener("click", () => fetchQuestions(user))
   // h1.addEventListener("click", () => timeLeft())
-  // submitBtn.addEventListener("click", () => fetchQuestions())
 } //figure out how to add event listener for timer here?
 
 function renderQuestions(question, user){
@@ -183,11 +183,17 @@ function renderQuestions(question, user){
   answerContainer.setAttribute("id", "answer-container")
 
   const stopwatch = document.createElement("span")
+  // const timer = document.createElement("span")
   stopwatch.setAttribute("id", "timer")
+  // timer.setAttribute("id", "timer")
+  // const stopwatch = document.getElementById("timer")
+  // debugger
+  // timer.innerText = "Time left: " + count
   stopwatch.innerText = "Time left: " + count //allows the count to load at the same time as the questions
   //if we don't do this then timer loads AFTER the questions with a lag time
-
+  
   questionContainer.append(answerContainer, stopwatch)
+  // questionContainer.append(answerContainer, timer)
 
   let rawCorrectAnswer = randomQuestion.correct_answer
   let dataCorrect = stringFixer(rawCorrectAnswer)
