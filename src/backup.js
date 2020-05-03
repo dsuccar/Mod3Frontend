@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-// let count = 600
+let count = 6
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -21,36 +21,35 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   const string14 = string13.replace(/gogo&shy;/g, "gogo")
   const string15 = string14.replace(/&atilde;/g, "ã")
   const string16 = string15.replace(/&micro;/g, "µ")
-  const string17 = string16.replace(/&ocirc;/g, "ô")
-  const string18 = string17.replace(/&rsquo;/g, "'")
-  return string18
+  return string16
 }
 
-// function timeLeft(user){ //putting this inside a function is the same as below effect
+function timeLeft(user){ //putting this inside a function is the same as below effect
   // const timeLeft = setInterval(function(){ //global variable that includes an anonymous function
   
-  // function stopTimer(){
-  //   clearInterval(time)
-  // }
+  function stopTimer(){
+    clearInterval(time)
+  }
   
-  // const time = setInterval(function(){ //can give it name by doing function <name>(){
+  const time = setInterval(function(){ //can give it name by doing function <name>(){
  
-    // const timer = document.createElement("span")
-    // timer.setAttribute("id", "timer")
+    const timer = document.createElement("span")
+    timer.setAttribute("id", "timer")
     // const timer = document.getElementById("timer") //lines after this are repeated later but this section allows timer to decrement each sec
     // timer.innerText = 0; //prevents timer from starting the moment you call renderMain
-    // debugger
-    // timer = document.getElementById("timer")
-    // count -= 1
-    // timer.innerText = "Time left: " + count //commenting this out means time is always undefined
-    // if(count === 0){
-    //   stopTimer()
-    //   gameOver(user)
+    // const timer = document.getElementById("timer")
+    debugger
+    count -= 1
+    timer.innerText = "Time left: " + count //commenting this out means time is always undefined
+    if(count === 0){
+      stopTimer()
+      gameOver(user)
       // count = 6
-  //   }
-  // }, 1000)
-//   return time
-// }
+    }
+  }, 1000)
+  return time
+//the problem here is visible when you open console inside of webpage
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchUsers()
@@ -123,13 +122,14 @@ function loginPage(users){
 }
 
 //login finds a user, or creates new
+
 function submitLogin(event, users){
-  // event.preventDefault()
-  const input = document.querySelector("input")
-    if(users.includes(input.value)){
-    let existingUser = input.value
-    renderMain(existingUser)
-    }else{
+  event.preventDefault()
+  // const input = document.querySelector("input")
+  //   if(users.includes(input.value)){
+  //   let existingUser = input.value
+  //   renderMain(existingUser)
+  //   }else{
     const obj = {
       name: event.target.parentNode.children[0].value
       // user_questions: user.user_questions
@@ -140,7 +140,7 @@ function submitLogin(event, users){
         "Accept" : "application/json"},
       body: JSON.stringify(obj)
     }).then(resp => resp.json()).then(user => renderMain(user))
-  }
+  // }
 }
 
 
@@ -176,13 +176,14 @@ function renderMain(user){
   main.append(mainPageContent)
   mainPageContent.append(h1)
 
-  // h1.addEventListener("click", () => (timeLeft(user), fetchQuestions(user))) //count usually decrements only once here and doesn't let you click on event listener. it automatically activates
+  h1.addEventListener("click", () => (timeLeft(user), fetchQuestions(user))) //count usually decrements only once here and doesn't let you click on event listener. it automatically activates
   // h1.addEventListener("click", () => timeLeft, fetchQuestions(user)) // does nothing
-  h1.addEventListener("click", () => fetchQuestions(user))
+  // h1.addEventListener("click", () => fetchQuestions(user))
   // h1.addEventListener("click", () => timeLeft())
 } //figure out how to add event listener for timer here?
 
 function renderQuestions(question, user){
+
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
   scoreCheckX[i].style.display = "block"
@@ -231,16 +232,15 @@ function renderQuestions(question, user){
 
   // const stopwatch = document.createElement("span")
   // stopwatch.setAttribute("id", "timer")
-  // timer = document.createElement("span")
   // timer.setAttribute("id", "timer")
-  // const stopwatch = document.getElementById("timer")
+  const stopwatch = document.getElementById("timer")
+  // debugger
   // timer.innerText = "Time left: " + count
-  // stopwatch.innerText = "Time left: " + count //allows the count to load at the same time as the questions
+  stopwatch.innerText = "Time left: " + count //allows the count to load at the same time as the questions
   //if we don't do this then timer loads AFTER the questions with a lag time
   
-  // questionContainer.append(answerContainer, stopwatch)
+  questionContainer.append(answerContainer, stopwatch)
   // questionContainer.append(answerContainer, timer)
-  questionContainer.append(answerContainer)
 
   let rawCorrectAnswer = randomQuestion.correct_answer
   let dataCorrect = stringFixer(rawCorrectAnswer)
