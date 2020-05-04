@@ -153,19 +153,21 @@ function submitLogin(event, users){
   }
 
   if(Array.isArray(users) === true){
+    // debugger
   mappedUsers = users.map(myFunc)
   }else{
     mappedUsers = users
   }
-  
-  if(!input){
-    
+  // let obj = objArray.find(obj => obj.id == 3);
 
+  // let obj = objArray.find(obj => obj.id == 3);
+  let user = users.find(user => user.name === input.value )
+  if(!input){
     existingUser = users
     renderMain(existingUser)
   }else if (input.value !== null && mappedUsers.includes(input.value)){  
-      existingUser = input.value
-      renderMain(existingUser)
+      existingUser = user
+      renderMain(user)
   }else{
     const obj = {
       name: event.target.parentNode.children[0].value
@@ -183,7 +185,7 @@ function submitLogin(event, users){
 
 
 function renderMain(user){
-
+  debugger
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
     if(scoreCheckX[i] !== ""){
