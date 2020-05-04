@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 6
+let count = 20
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -39,7 +39,7 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
     // timer.setAttribute("id", "timer")
     // const timer = document.getElementById("timer") //lines after this are repeated later but this section allows timer to decrement each sec
     // timer.innerText = 0; //prevents timer from starting the moment you call renderMain
-    // debugger
+
     // timer = document.getElementById("timer")
     // count -= 1
     // timer.innerText = "Time left: " + count //commenting this out means time is always undefined
@@ -63,7 +63,7 @@ const timer = setInterval(function(){
 if(count === 0){
   stopTimer()
   gameOver(user)
-  count = 6
+  count = 20
 } },1000)
 }
 
@@ -110,6 +110,8 @@ function loginPage(users){
   scoreContainerTitle.setAttribute("id", "score-container-title")
   scoreContainerTitle.innerText = "Click here to see our users"
 
+
+
   // leaderboard
   scoreContainer.style.display = "none"
   // sortedUser = user.sort((a, b) => b - a)
@@ -121,6 +123,7 @@ function loginPage(users){
     li.innerText = `${users[i].name}: ${users[i].user_questions.length} points`
     ul.append(li)
   }
+
   scoreContainerTitle.addEventListener("click", () => {
     if(scoreContainer.style.display === "none"){
       scoreContainer.style.display = "block"
@@ -140,6 +143,7 @@ function loginPage(users){
 //login finds a user, or creates new
 function submitLogin(event, users){
   // event.preventDefault()
+  // debugger
   const input = document.querySelector("input")
   
   let existingUser
@@ -147,7 +151,7 @@ function submitLogin(event, users){
   function myFunc(user) {
     return user.name
   }
-  // debugger
+
   if(Array.isArray(users) === true){
   mappedUsers = users.map(myFunc)
   }else{
@@ -155,9 +159,11 @@ function submitLogin(event, users){
   }
   
   if(!input){
+    
+
     existingUser = users
     renderMain(existingUser)
-  }else if (input.value !== null && mappedUsers.includes(input.value)){
+  }else if (input.value !== null && mappedUsers.includes(input.value)){  
       existingUser = input.value
       renderMain(existingUser)
   }else{
@@ -177,6 +183,7 @@ function submitLogin(event, users){
 
 
 function renderMain(user){
+
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
     if(scoreCheckX[i] !== ""){
@@ -214,20 +221,9 @@ function renderMain(user){
 } //figure out how to add event listener for timer here?
 
 function renderQuestions(question, user){
-  const stopwatch = document.createElement("span")
-  stopwatch.setAttribute("id", "timer")
-  stopwatch.innerText = "Time left: " + count
-  // setInterval(function(){
-  //   count -= 1
-  //   stopwatch.innerText = "Time left: " + count
-  // function stopTimer(){
-  //   clearInterval(count)
-  // }
-  // if(count === 0){
-  //   stopTimer()
-  //   gameOver(user)
-  //   count = 6
-  // } },1000)
+  // const stopwatch = document.createElement("span")
+  // stopwatch.setAttribute("id", "timer")
+  // stopwatch.innerText = "Time left: " + count
 
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
@@ -248,7 +244,7 @@ function renderQuestions(question, user){
   // let mainPageContent = document.createElement("div")
   // mainPageContent.setAttribute("id", "main-page")
   let mainPageContent = document.getElementById("main-page")
-  // debugger
+
   if(mainPageContent){
     mainPageContent.remove()
   }
@@ -270,6 +266,9 @@ function renderQuestions(question, user){
 
   questionText.innerText = dataText
 
+  const stopwatch = document.createElement("span")
+  stopwatch.setAttribute("id", "timer")
+  stopwatch.innerText = "Time left: " + count
   questionContainer.append(questionText, stopwatch)
   
   const answerContainer = document.createElement("div")
@@ -322,9 +321,9 @@ function renderQuestions(question, user){
   for (let i = answerContainer.children.length; i >= 0; i--) {
         answerContainer.appendChild(answerContainer.children[getRandomInt(answersArr.length)]); //4
   }
-
+  // debugger
   const correct = document.getElementById("correct-answer")
-  correct.addEventListener("click", (event) => correctAns(event, randomQuestion, user))
+  correct.addEventListener("click", (event) => correctAns(event, randomQuestion, user.id, user.name))
 
   const incorrect = document.querySelectorAll("#incorrect-answer")
   incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event, user))})
@@ -347,19 +346,16 @@ function incorrectAns(event, user){
   renderQuestions(globalQuestion, user) //render next question
 }
 
-function correctAns(event, randomQuestion, user) {
+function correctAns(event, randomQuestion, userId, userName) {
   event.preventDefault()
-
-  // const points = document.querySelector(".round-points")
+  // debugger
   const points = document.getElementById("round-points")
   points.innerText = `Points: ${++globalPoints}`
 
-  // const bigRedX = document.querySelector(".big-red-x")
   const bigRedX = document.getElementById("big-red-x")
   bigRedX.innerText = ""
 
   const h2 = document.querySelector("h2")
-  // const greenCheckmark = document.querySelector(".big-green-checkmark")
   const greenCheckmark = document.getElementById("big-green-checkmark")
   h2.append(greenCheckmark)
   greenCheckmark.innerText = "✅"
@@ -368,7 +364,8 @@ function correctAns(event, randomQuestion, user) {
 
     obj = {
       question_id: randomQuestion.id,
-      user_id: user.id
+      user_id: userId
+      // user_id: user.id
     }
 
     fetch(USERQUESTIONS_URL, {
@@ -379,10 +376,17 @@ function correctAns(event, randomQuestion, user) {
       },
       body: JSON.stringify(obj)
     })
+
+    user = {
+      id: userId,
+      name: userName
+    }
+    // debugger
     renderQuestions(globalQuestion, user)
 }
 
 function gameOver(user){
+  // debugger
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
   const clickHereToBegin = document.getElementById("click-here-to-begin")
