@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 20
+let count = 6
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -63,7 +63,7 @@ const timer = setInterval(function(){
 if(count === 0){
   stopTimer()
   gameOver(user)
-  count = 20
+  count = 6
 } },1000)
 }
 
@@ -148,6 +148,7 @@ function submitLogin(event, users){
   
   let existingUser
   let mappedUsers
+  let user
   function myFunc(user) {
     return user.name
   }
@@ -160,8 +161,9 @@ function submitLogin(event, users){
   }
   // let obj = objArray.find(obj => obj.id == 3);
 
-  // let obj = objArray.find(obj => obj.id == 3);
-  let user = users.find(user => user.name === input.value )
+  if(users.length > 1){
+    user = users.find(user => user.name === input.value )
+  }
   if(!input){
     existingUser = users
     renderMain(existingUser)
