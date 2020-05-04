@@ -112,20 +112,79 @@ function loginPage(users){
   scoreContainerTitle.setAttribute("id", "score-container-title")
   scoreContainerTitle.innerText = "Click here to see our users"
 
-
-
   // leaderboard
   scoreContainer.style.display = "none"
-  // sortedUser = user.sort((a, b) => b - a)
+
   ul = document.createElement("ul")
   ul.setAttribute("id", "leaderboard-scores")
-  for(let i = 0; i < users.length; i++){
-    const li = document.createElement("li")
-    li.classList.add("leaderboard")
-    li.innerText = `${users[i].name}: ${users[i].user_questions.length} points`
-    ul.append(li)
-  }
+    let arrayOfNames = []
+    for(let i = 0; i < users.length; i++){
+      arrayOfNames.push(users[i].name)
+    }
 
+    let highScorers = []
+    // let highScorers2
+    let sortedHighScorers = []
+    for(let i = 0; i < users.length; i++){
+      highScorers.push(users[i].user_questions)      
+    }
+    for(let i = 0; i < highScorers.length; i++){
+      sortedHighScorers.push(highScorers[i].length)
+    }
+    // debugger
+
+    // var arrayOfNames = ["a", "b", "c", "d"],
+    // sortedHighScorers = [4, 2, 3, 1],
+    let result = []
+    let i
+    let l
+    i, l = Math.min(arrayOfNames.length, sortedHighScorers.length);
+    // let l
+for (let i = 0; i < arrayOfNames.length; i++) {
+    result.push(arrayOfNames[i], sortedHighScorers[i]);
+}
+result.push(...arrayOfNames.slice(l), ...sortedHighScorers.slice(l));
+// debugger
+    // must sort sortedHighScorers
+    // let finalSortedScores = sortedHighScorers.sort((a, b) => b - a)
+
+
+    function compareValues(key, order = 'asc') {
+      return function innerSort(a, b) {
+        if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+          // property doesn't exist on either object
+          return 0;
+        }
+    
+        const varA = (typeof a[key] === 'string')
+          ? a[key].toUpperCase() : a[key];
+        const varB = (typeof b[key] === 'string')
+          ? b[key].toUpperCase() : b[key];
+    
+        let comparison = 0;
+        if (varA > varB) {
+          comparison = 1;
+        } else if (varA < varB) {
+          comparison = -1;
+        }
+        return (
+          (order === 'desc') ? (comparison * -1) : comparison
+        );
+      };
+    }
+
+    // sortedHighScorers === [66, 8, 5, 6, 0, 0, 0, 0, 0, 0, 2, 1, 32, 46, 1, 14, 3, 9]
+
+    debugger
+    result.sort(compareValues(user_questions, 'desc'));
+    // debugger
+    for(let i = 0; i < 10; i++){
+      highScorers.push(users[i].user_questions)
+      const li = document.createElement("li")
+      li.classList.add("leaderboard")
+      li.innerText = `${users[i].name}: ${finalSorted[i]} points`
+      ul.append(li)
+    }
   scoreContainerTitle.addEventListener("click", () => {
     if(scoreContainer.style.display === "none"){
       scoreContainer.style.display = "block"
