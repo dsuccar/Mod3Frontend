@@ -3,10 +3,10 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let globalCount = 7
+let globalCount = 60
 // let count = 7
 let count = globalCount
-let globalLives = 2
+let globalLives = 5
 let lives = globalLives
 let timer
 
@@ -142,13 +142,20 @@ function loginPage(users){
     usersInfo[i].user_questions = usersInfo[i].user_questions.length
     result.push(usersInfo)
   }
-
   usersInfo.sort(function(a, b) { 
     return b.user_questions - a.user_questions;
   })
   console.log(usersInfo)
 
-  for(let i = 0; i < 10; i++){
+  let variable
+  if(10 > users.length){
+    variable = users.length
+  }else{
+    variable = 10
+  }
+  // for(let i = 0; i < 10; i++){
+    for(let i = 0; i < variable; i++){
+      // debugger
     highScorers.push(users[i].user_questions)
     const li = document.createElement("li")
     li.classList.add("leaderboard")
