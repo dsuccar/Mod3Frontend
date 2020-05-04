@@ -3,8 +3,9 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 7
 let globalCount = 7
+// let count = 7
+let count = globalCount
 let globalLives = 2
 let lives = globalLives
 let timer
@@ -216,7 +217,7 @@ function submitLogin(event, users){
 
 
 function renderMain(user){
-  lives = 5
+  lives = globalLives
 
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
@@ -420,6 +421,7 @@ function correctAns(event, randomQuestion, userId, userName) {
 
 function gameOver(user){
   stopTimer()
+  count = globalCount
   // debugger
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
