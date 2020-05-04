@@ -3,9 +3,11 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 60
-let globalLives = 5
+let count = 7
+let globalCount = 7
+let globalLives = 2
 let lives = globalLives
+let timer
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -53,19 +55,33 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   // }, 1000)
 //   return time
 // }
+
+
+
+function stopTimer(){
+  clearInterval(timer)
+}
+
 function timeLeft(user){
-  function stopTimer(){
-    clearInterval(timer)
-  }
-const timer = setInterval(function(){
+  // function stopTimer(){
+  //   clearInterval(timer)
+  // }
+timer = setInterval(function(){
   count -= 1
   stopwatch = document.getElementById("timer")
   stopwatch.innerText = "Time left: " + count
 
-if(count <= 0 || lives <= 0){
-  stopTimer()
+// if(count <= 0 || lives <= 0){
+//   stopTimer()
+//   gameOver(user)
+//   count = 60
+// } },1000)
+// }
+
+if(count <= 0){
+  // stopTimer()
   gameOver(user)
-  count = 60
+  count = 7
 } },1000)
 }
 
@@ -117,74 +133,28 @@ function loginPage(users){
 
   ul = document.createElement("ul")
   ul.setAttribute("id", "leaderboard-scores")
-    let arrayOfNames = []
-    for(let i = 0; i < users.length; i++){
-      arrayOfNames.push(users[i].name)
-    }
 
-    let highScorers = []
-    // let highScorers2
-    let sortedHighScorers = []
-    for(let i = 0; i < users.length; i++){
-      highScorers.push(users[i].user_questions)      
-    }
-    for(let i = 0; i < highScorers.length; i++){
-      sortedHighScorers.push(highScorers[i].length)
-    }
-    // debugger
+  const highScorers = []
+  let usersInfo = users
+  let result = []
+  for(let i = 0; i < usersInfo.length; i++){
+    usersInfo[i].user_questions = usersInfo[i].user_questions.length
+    result.push(usersInfo)
+  }
 
-    // var arrayOfNames = ["a", "b", "c", "d"],
-    // sortedHighScorers = [4, 2, 3, 1],
-    let result = []
-    let i
-    let l
-    i, l = Math.min(arrayOfNames.length, sortedHighScorers.length);
-    // let l
-for (let i = 0; i < arrayOfNames.length; i++) {
-    result.push(arrayOfNames[i], sortedHighScorers[i]);
-}
-result.push(...arrayOfNames.slice(l), ...sortedHighScorers.slice(l));
-// debugger
-    // must sort sortedHighScorers
-    // let finalSortedScores = sortedHighScorers.sort((a, b) => b - a)
+  usersInfo.sort(function(a, b) { 
+    return b.user_questions - a.user_questions;
+  })
+  console.log(usersInfo)
 
+  for(let i = 0; i < 10; i++){
+    highScorers.push(users[i].user_questions)
+    const li = document.createElement("li")
+    li.classList.add("leaderboard")
+    li.innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
+    ul.append(li)
+  }
 
-    function compareValues(key, order = 'asc') {
-      return function innerSort(a, b) {
-        if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-          // property doesn't exist on either object
-          return 0;
-        }
-    
-        const varA = (typeof a[key] === 'string')
-          ? a[key].toUpperCase() : a[key];
-        const varB = (typeof b[key] === 'string')
-          ? b[key].toUpperCase() : b[key];
-    
-        let comparison = 0;
-        if (varA > varB) {
-          comparison = 1;
-        } else if (varA < varB) {
-          comparison = -1;
-        }
-        return (
-          (order === 'desc') ? (comparison * -1) : comparison
-        );
-      };
-    }
-
-    // sortedHighScorers === [66, 8, 5, 6, 0, 0, 0, 0, 0, 0, 2, 1, 32, 46, 1, 14, 3, 9]
-
-    debugger
-    result.sort(compareValues(user_questions, 'desc'));
-    // debugger
-    for(let i = 0; i < 10; i++){
-      highScorers.push(users[i].user_questions)
-      const li = document.createElement("li")
-      li.classList.add("leaderboard")
-      li.innerText = `${users[i].name}: ${finalSorted[i]} points`
-      ul.append(li)
-    }
   scoreContainerTitle.addEventListener("click", () => {
     if(scoreContainer.style.display === "none"){
       scoreContainer.style.display = "block"
@@ -203,8 +173,7 @@ result.push(...arrayOfNames.slice(l), ...sortedHighScorers.slice(l));
 
 //login finds a user, or creates new
 function submitLogin(event, users){
-  // event.preventDefault()
-  // debugger
+
   const input = document.querySelector("input")
   
   let existingUser
@@ -385,10 +354,13 @@ function renderQuestions(question, user){
 
 function incorrectAns(event, user){
   event.preventDefault()
+  questionContainer = document.getElementById("question-container")
   lives -= 1
   // if(lives <= 0){
   //   gameOver(user)
+
   // }
+  // debugger
   // const bigGreenCheckmark = document.querySelector(".big-green-checkmark")
   const bigGreenCheckmark = document.getElementById("big-green-checkmark")
   bigGreenCheckmark.innerText = ""
@@ -400,8 +372,11 @@ function incorrectAns(event, user){
   h2.append(redX)
 
   console.log("Success!")
-
+  if(lives <= 0){
+    gameOver(user)
+  }else{
   renderQuestions(globalQuestion, user) //render next question
+  }
 }
 
 function correctAns(event, randomQuestion, userId, userName) {
@@ -444,6 +419,8 @@ function correctAns(event, randomQuestion, userId, userName) {
 }
 
 function gameOver(user){
+  stopTimer()
+  // debugger
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
   const clickHereToBegin = document.getElementById("click-here-to-begin")
@@ -468,9 +445,10 @@ function gameOver(user){
   restart.append(yesBtn,noBtn)
   gameOverMessage.append(restart)
   main.append(gameOverMessage)
-  
+
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), clickHereToBegin.remove(), submitLogin(event)))
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event)))
   yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event, user)))
   noBtn.addEventListener("click", (event) => (gameOverMessage.remove(), fetchUsers(event)))
+  // debugger
 }
