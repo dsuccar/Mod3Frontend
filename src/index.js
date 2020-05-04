@@ -3,7 +3,9 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let count = 6
+let count = 60
+let globalLives = 5
+let lives = globalLives
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -60,10 +62,10 @@ const timer = setInterval(function(){
   stopwatch = document.getElementById("timer")
   stopwatch.innerText = "Time left: " + count
 
-if(count === 0){
+if(count <= 0 || lives <= 0){
   stopTimer()
   gameOver(user)
-  count = 6
+  count = 60
 } },1000)
 }
 
@@ -137,7 +139,7 @@ function loginPage(users){
   loginContainer.append(input, submitBtn, scoreContainerTitle)
   main.append(loginContainer)
   
-  submitBtn.addEventListener("click", (event) => submitLogin(event, users) ) //log in
+  submitBtn.addEventListener("click", (event) => submitLogin(event, users) )
 }
 
 //login finds a user, or creates new
@@ -154,8 +156,7 @@ function submitLogin(event, users){
   }
 
   if(Array.isArray(users) === true){
-    // debugger
-  mappedUsers = users.map(myFunc)
+    mappedUsers = users.map(myFunc)
   }else{
     mappedUsers = users
   }
@@ -187,7 +188,8 @@ function submitLogin(event, users){
 
 
 function renderMain(user){
-  debugger
+  lives = 5
+
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
     if(scoreCheckX[i] !== ""){
@@ -225,10 +227,6 @@ function renderMain(user){
 } //figure out how to add event listener for timer here?
 
 function renderQuestions(question, user){
-  // const stopwatch = document.createElement("span")
-  // stopwatch.setAttribute("id", "timer")
-  // stopwatch.innerText = "Time left: " + count
-
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
   scoreCheckX[i].style.display = "block"
@@ -245,8 +243,6 @@ function renderQuestions(question, user){
   let randomQuestion = question[Math.floor(Math.random() * question.length)]//Math.floor(Math.random() * Math.floor(max));
 
   console.log("Rendering question for user")
-  // let mainPageContent = document.createElement("div")
-  // mainPageContent.setAttribute("id", "main-page")
   let mainPageContent = document.getElementById("main-page")
 
   if(mainPageContent){
@@ -254,7 +250,7 @@ function renderQuestions(question, user){
   }
   const loginContainer = document.getElementById("login-container")
   if(loginContainer){
-    loginContainer.remove()
+    loginContainer.remove() //ann said the .remove() can impact performance
   }
   // loginContainer.style.display = "none"
 
@@ -270,22 +266,17 @@ function renderQuestions(question, user){
 
   questionText.innerText = dataText
 
+  const chancesLeft = document.createElement("p")
+  chancesLeft.setAttribute("id", "timer")
+  chancesLeft.innerText = "Lives: " + lives
+
   const stopwatch = document.createElement("span")
   stopwatch.setAttribute("id", "timer")
   stopwatch.innerText = "Time left: " + count
-  questionContainer.append(questionText, stopwatch)
+  questionContainer.append(questionText, stopwatch, chancesLeft)
   
   const answerContainer = document.createElement("div")
   answerContainer.setAttribute("id", "answer-container")
-
-  // const stopwatch = document.createElement("span")
-  // stopwatch.setAttribute("id", "timer")
-  // timer = document.createElement("span")
-  // timer.setAttribute("id", "timer")
-  // const stopwatch = document.getElementById("timer")
-  // timer.innerText = "Time left: " + count
-  // stopwatch.innerText = "Time left: " + count //allows the count to load at the same time as the questions
-  //if we don't do this then timer loads AFTER the questions with a lag time
   
   // questionContainer.append(answerContainer, stopwatch)
   // questionContainer.append(answerContainer, timer)
@@ -335,6 +326,10 @@ function renderQuestions(question, user){
 
 function incorrectAns(event, user){
   event.preventDefault()
+  lives -= 1
+  // if(lives <= 0){
+  //   gameOver(user)
+  // }
   // const bigGreenCheckmark = document.querySelector(".big-green-checkmark")
   const bigGreenCheckmark = document.getElementById("big-green-checkmark")
   bigGreenCheckmark.innerText = ""
@@ -390,7 +385,6 @@ function correctAns(event, randomQuestion, userId, userName) {
 }
 
 function gameOver(user){
-  // debugger
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
   const clickHereToBegin = document.getElementById("click-here-to-begin")
