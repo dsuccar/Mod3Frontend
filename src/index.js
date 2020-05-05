@@ -3,13 +3,13 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let globalCount = 60
+let globalCount = 105
 // let count = 7
 let count = globalCount
-let globalLives = 5
+let globalLives = 10
 let lives = globalLives
 let timer
-
+// console.log(faceapi.nets)
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
   const string3 = string2.replace(/&#039;/g, "'")
@@ -82,7 +82,7 @@ timer = setInterval(function(){
 if(count <= 0){
   // stopTimer()
   gameOver(user)
-  count = 7
+  count = 105
 } },1000)
 }
 
