@@ -336,6 +336,7 @@ function renderQuestions(question, user){
   for(let i = 0; i < answersArr.length; i++){
     const answer = document.createElement("div")
     answer.classList.add("answer")
+    
     answer.innerText = answersArr[i]
     answerContainer.append(answer)
     if(answersArr[i] === dataCorrect) {
