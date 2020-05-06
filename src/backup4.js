@@ -37,14 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function fetchUsers(){
-  console.log("fetching users")
-  fetch(USERS_URL)
-  .then(resp => resp.json())
-  .then(users => loginPage(users))
+    console.log("fetching users")
+    fetch(USERS_URL)
+    .then(resp => resp.json())
+    .then(users => loginPage(users))
 }
 
 function loginPage(users){
   console.log("login page")
+  globalUsers = users // intentional global variable
 
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
@@ -64,43 +65,29 @@ function loginPage(users){
   loggedIn.style.display = "none"
 
   ul = document.getElementById("leaderboard-scores")
-  scoreBoard(users)
 
-  loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
+  const lives = document.getElementById("lives")
+  lives.innerText = ""
+//   scoreBoard(users)
+    scoreBoard(globalUsers)
+
+//   loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
+    // loginBtn.addEventListener("click", (event) => submitLogin(event, globalUsers) )
+// loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
+    // beforeSubmitLogin(event, users)
+    // loginBtn.onclick = submitLogin
+    loginBtn.onclick = beforeSubmitLogin
 }
 
-function scoreBoard(users){
-  console.log("scoreboard")
-
-  ul = document.getElementById("leaderboard-scores")
-
-  let usersInfo = users
-  for(let i = 0; i < usersInfo.length; i++){
-    //   if(usersInfo[i].user_questions.length > 1){
-    if(Array.isArray(usersInfo[i].user_questions) === true){
-        usersInfo[i].user_questions = usersInfo[i].user_questions.length
-    }else{
-        usersInfo[i].user_questions
-    }
-  }
-  usersInfo.sort(function(a, b) { 
-    return b.user_questions - a.user_questions;
-  })
-
-  let variable
-  if(10 > users.length){
-    variable = users.length
-  }else{
-    variable = 10
-  }
-  const li = document.querySelectorAll(".leaderboard")
-  for(let i = 0; i < variable; i++){
-    li[i].innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
-  }
+function beforeSubmitLogin(){
+    const loginBtn = document.getElementById("login-button")
+        loginBtn.addEventListener = submitLogin(event, globalUsers)
 }
 
-function submitLogin(event, users){ //login finds a user, or creates new
+function submitLogin(event, globalUsers){ //login finds a user, or creates new
+// function submitLogin(event, users){ //login finds a user, or creates new
   // event.preventDefault()
+
   console.log("submitting login")
   const input = document.querySelector("input")
   input.style.display = "none"
@@ -121,18 +108,23 @@ function submitLogin(event, users){ //login finds a user, or creates new
     return user.name
   }
   if(Array.isArray(users) === true){
-    mappedUsers = users.map(myFunc)
+    // mappedUsers = users.map(myFunc)
+        mappedUsers = globalUsers.map(myFunc)
   }else{
-    mappedUsers = users
+    // mappedUsers = users
+    mappedUsers = globalUsers
   }
 
-  if(users.length > 1){
-    user = users.find(user => user.name === input.value )
+//   if(users.length > 1){
+  if(globalUsers.length > 1){
+    // user = users.find(user => user.name === input.value )
+    user = globalUsers.find(user => user.name === input.value )
   }
 
     if (input.value !== null && mappedUsers.includes(input.value)){  
       existingUser = user
-      fetchQuestions(existingUser, users)
+    //   fetchQuestions(existingUser, users)
+        fetchQuestions(existingUser, globalUsers)
     }else{
       const obj = {
         name: event.target.parentNode.children[1].value
@@ -142,19 +134,51 @@ function submitLogin(event, users){ //login finds a user, or creates new
         headers: {"Content-Type" : "application/json",
           "Accept" : "application/json"},
         body: JSON.stringify(obj)
-      }).then(resp => resp.json()).then(user => fetchQuestions(user))
+        }).then(resp => resp.json()).then(user => fetchQuestions(user, globalUsers))
+    // }).then(resp => resp.json()).then(user => fetchQuestions(user, users))
   }
 }
 
-function fetchQuestions(user) {
+function scoreBoard(users){
+    console.log("scoreboard")
+  
+    ul = document.getElementById("leaderboard-scores")
+  
+    let usersInfo = users
+    for(let i = 0; i < usersInfo.length; i++){
+      //   if(usersInfo[i].user_questions.length > 1){
+ 
+      if(Array.isArray(usersInfo[i].user_questions) === true){
+          usersInfo[i].user_questions = usersInfo[i].user_questions.length
+      }else{
+          usersInfo[i].user_questions
+      }
+    }
+    usersInfo.sort(function(a, b) { 
+      return b.user_questions - a.user_questions;
+    })
+  
+    let variable
+    if(10 > users.length){
+      variable = users.length
+    }else{
+      variable = 10
+    }
+    const li = document.querySelectorAll(".leaderboard")
+    for(let i = 0; i < variable; i++){
+      li[i].innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
+    }
+}
+
+function fetchQuestions(user, users) {
 
   console.log("Loading questions")
   fetch(QUESTIONS_URL)
     .then(resp => resp.json())
-    .then(question => beforeRenderQuestions(question, user))
+    .then(question => beforeRenderQuestions(question, user, users))
 }
 
-function beforeRenderQuestions(question, user){
+function beforeRenderQuestions(question, user, users){
   console.log("before rendering")
 
   const scoreContainer = document.getElementById("score-container")
@@ -167,10 +191,10 @@ function beforeRenderQuestions(question, user){
   lives = globalLives
   globalPoints = 0
 
-  renderQuestions(question, user)
+  renderQuestions(question, user, users)
 }
 
-function renderQuestions(question, user){
+function renderQuestions(question, user, users){
   console.log("Rendering question for user")
 
   const h1 = document.getElementById("click-here-to-begin")
@@ -260,7 +284,7 @@ function renderQuestions(question, user){
   incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event, user, users))})
 }
 
-function incorrectAns(event, user){
+function incorrectAns(event, user, users){
   event.preventDefault()
   questionContainer = document.getElementById("question-container")
   lives -= 1
@@ -278,13 +302,15 @@ function incorrectAns(event, user){
 
   console.log("Incorrect!")
   if(lives <= 0){
-    gameOver(globalQuestion, user, users)
+    // gameOver(globalQuestion, user, users)
+    // gameOver(globalQuestion, users)
+    gameOver(users)
   }else{
   renderQuestions(globalQuestion, user, users) //render next question
   }
 }
 
-function correctAns(event, randomQuestion, userId, userName) {
+function correctAns(event, randomQuestion, userId, userName, users) {
   event.preventDefault()
 
   const points = document.getElementById("round-points")
@@ -323,7 +349,7 @@ function correctAns(event, randomQuestion, userId, userName) {
     renderQuestions(globalQuestion, user, users)
 }
 
-function gameOver(){
+function gameOver(users){
 
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
@@ -352,4 +378,6 @@ function gameOver(){
   main.append(gameOverMessage)
 
   yesBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers()))
+ 
+    // yesBtn.addEventListener("click", () => (gameOverMessage.remove(), loginPage(users)))
 }
