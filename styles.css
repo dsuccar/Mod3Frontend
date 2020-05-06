@@ -1,7 +1,11 @@
-logged-in-message {
-    /* font-size: 15px; */
+/* logged-in-message {
+    font-size: 15px;
     font-size: 10000%;
     color: #dddddd;
+  } */
+  #button {
+    position: absolute;
+    
   }
 
   .score-container {

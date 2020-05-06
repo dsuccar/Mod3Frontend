@@ -68,6 +68,9 @@ function loginPage(users){
 
   const lives = document.getElementById("lives")
   lives.innerText = ""
+
+  const image = document.getElementById("brain")
+  image.style.display = "block"
 //   scoreBoard(users)
     scoreBoard(globalUsers)
 
@@ -181,6 +184,9 @@ function fetchQuestions(user, users) {
 function beforeRenderQuestions(question, user, users){
   console.log("before rendering")
 
+  const image = document.getElementById("brain")
+  image.style.display = "none"
+
   const scoreContainer = document.getElementById("score-container")
   scoreContainer.style.display = "none"
   const scoreContainerTitle = document.getElementById("score-container-title")
@@ -292,13 +298,14 @@ function incorrectAns(event, user, users){
   const bigGreenCheckmark = document.getElementById("big-green-checkmark")
   bigGreenCheckmark.innerText = ""
 
-  const h2 = document.querySelector("h2")
+//   const h2 = document.querySelector("h2")
+
 
   const redX = document.getElementById("big-red-x")
   redX.innerText = "❌"
   redX.style.display = "block"
 
-  h2.append(redX)
+//   h2.append(redX)
 
   console.log("Incorrect!")
   if(lives <= 0){
@@ -319,9 +326,9 @@ function correctAns(event, randomQuestion, userId, userName, users) {
   const bigRedX = document.getElementById("big-red-x")
   bigRedX.innerText = ""
 
-  const h2 = document.querySelector("h2")
+//   const h2 = document.querySelector("h2")
   const greenCheckmark = document.getElementById("big-green-checkmark")
-  h2.append(greenCheckmark)
+//   h2.append(greenCheckmark)
   greenCheckmark.innerText = "✅"
   greenCheckmark.style.display = "block"
 
