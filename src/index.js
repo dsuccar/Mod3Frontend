@@ -541,7 +541,7 @@ function gameOver(question, user){
 
   // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user), scoreBoard(user)))
   //the above doesn't work because you don't pass in multiple users in this function
-  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user)))
-  noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers())) //has the "double bug"
+  noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user)))
+  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers())) //has the "double bug"
   // noBtn.addEventListener("click", () => (gameOverMessage.remove(), location.reload())) //works but I don't like it
 }
