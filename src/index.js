@@ -28,7 +28,11 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   const string16 = string15.replace(/&micro;/g, "µ")
   const string17 = string16.replace(/&ocirc;/g, "ô")
   const string18 = string17.replace(/&rsquo;/g, "'")
-  return string18
+  const string19 = string18.replace(/&aicute;/g, "í")
+  const string20 = string19.replace(/&oacute;/g, "ó")
+  const string21 = string20.replace(/&ldquo;/g, "“")
+  const string22 = string21.replace(/&rdquo;/g, "”")
+  return string22
 }
 
 // function timeLeft(user){ //putting this inside a function is the same as below effect
@@ -114,20 +118,28 @@ function loginPage(users){
   }
 
   const main = document.querySelector(".main")
-  const loginContainer = document.createElement("div")
-  loginContainer.setAttribute("id", "login-container")
+  // const loginContainer = document.createElement("div")
+  // loginContainer.setAttribute("id", "login-container")
+  const loginContainer = document.getElementById("login-container")
 
-  const input = document.createElement("input")
-  input.placeholder = "Log in here..." 
-  const submitBtn = document.createElement("button")
-  submitBtn.innerText = "Login"
+  // const input = document.createElement("input")
+  // input.placeholder = "Log in here..." 
+  const input = document.querySelector("input")
+  input.style.display = "block"
 
-  const scoreContainer = document.createElement("div")
-  scoreContainer.setAttribute("id", "score-container")
+  // const submitBtn = document.createElement("button")
+  // submitBtn.innerText = "Login"
+  const loginBtn = document.getElementById("login-button")
+  loginBtn.style.display = "block"
 
-  const scoreContainerTitle = document.createElement("h3")
-  scoreContainerTitle.setAttribute("id", "score-container-title")
-  scoreContainerTitle.innerText = "Click here to see our users"
+  // const scoreContainer = document.createElement("div")
+  // scoreContainer.setAttribute("id", "score-container")
+  const scoreContainer = document.getElementById("score-container")
+
+  // const scoreContainerTitle = document.createElement("h3")
+  // scoreContainerTitle.setAttribute("id", "score-container-title")
+  // scoreContainerTitle.innerText = "Click here to see our users"
+  const scoreContainerTitle = document.getElementById("score-container-title")
 
   // leaderboard
   scoreContainer.style.display = "none"
@@ -155,7 +167,7 @@ function loginPage(users){
   }
   // for(let i = 0; i < 10; i++){
     for(let i = 0; i < variable; i++){
-      // debugger
+
     highScorers.push(users[i].user_questions)
     const li = document.createElement("li")
     li.classList.add("leaderboard")
@@ -173,17 +185,34 @@ function loginPage(users){
 
   scoreContainerTitle.append(scoreContainer)
   scoreContainer.append(ul)
-  loginContainer.append(input, submitBtn, scoreContainerTitle)
+  // loginContainer.append(input, submitBtn, scoreContainerTitle)
   main.append(loginContainer)
   
-  submitBtn.addEventListener("click", (event) => submitLogin(event, users) )
+  loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
 }
 
 //login finds a user, or creates new
 function submitLogin(event, users){
 
   const input = document.querySelector("input")
-  
+  input.style.display = "none"
+
+  const loginBtn = document.getElementById("login-button")
+  loginBtn.style.display = "none"
+
+  const attach = document.getElementById("attach")
+  const loggedIn = document.createElement("h6")
+  loggedIn.setAttribute("id", "logged-in-message")
+  loggedIn.classList.add("is-6")
+  // loggedIn.classList.add("subtitle")
+  loggedIn.innerText = "You have successfully logged in!"
+  loggedIn.style.display = "block"
+
+
+  const loginMessage = document.getElementById("login-message")
+  // loginMessage.classList.add("is-1")
+  loginMessage.append(loggedIn)
+
   let existingUser
   let mappedUsers
   let user
@@ -201,6 +230,7 @@ function submitLogin(event, users){
   if(users.length > 1){
     user = users.find(user => user.name === input.value )
   }
+
   if(!input){
     existingUser = users
     renderMain(existingUser)
@@ -249,9 +279,9 @@ function renderMain(user){
   const main = document.querySelector(".main")
 
   const loginContainer = document.getElementById("login-container")
-  if(loginContainer){
-    loginContainer.remove()
-  }
+  // if(loginContainer){
+  //   loginContainer.remove()
+  // }
 
   main.append(mainPageContent)
   mainPageContent.append(h1)
@@ -285,9 +315,9 @@ function renderQuestions(question, user){
     mainPageContent.remove()
   }
   const loginContainer = document.getElementById("login-container")
-  if(loginContainer){
-    loginContainer.remove() //ann said the .remove() can impact performance
-  }
+  // if(loginContainer){
+  //   loginContainer.remove() //ann said the .remove() can impact performance
+  // }
   // loginContainer.style.display = "none"
 
   const questionContainer = document.getElementById("question-container")
@@ -353,7 +383,7 @@ function renderQuestions(question, user){
   for (let i = answerContainer.children.length; i >= 0; i--) {
         answerContainer.appendChild(answerContainer.children[getRandomInt(answersArr.length)]); //4
   }
-  // debugger
+
   const correct = document.getElementById("correct-answer")
   correct.addEventListener("click", (event) => correctAns(event, randomQuestion, user.id, user.name))
 
@@ -369,7 +399,7 @@ function incorrectAns(event, user){
   //   gameOver(user)
 
   // }
-  // debugger
+
   // const bigGreenCheckmark = document.querySelector(".big-green-checkmark")
   const bigGreenCheckmark = document.getElementById("big-green-checkmark")
   bigGreenCheckmark.innerText = ""
@@ -378,6 +408,8 @@ function incorrectAns(event, user){
   // const redX = document.querySelector(".big-red-x")
   const redX = document.getElementById("big-red-x")
   redX.innerText = "❌"
+  redX.style.display = "block"
+
   h2.append(redX)
 
   console.log("Success!")
@@ -390,7 +422,7 @@ function incorrectAns(event, user){
 
 function correctAns(event, randomQuestion, userId, userName) {
   event.preventDefault()
-  // debugger
+
   const points = document.getElementById("round-points")
   points.innerText = `Points: ${++globalPoints}`
 
@@ -401,6 +433,7 @@ function correctAns(event, randomQuestion, userId, userName) {
   const greenCheckmark = document.getElementById("big-green-checkmark")
   h2.append(greenCheckmark)
   greenCheckmark.innerText = "✅"
+  greenCheckmark.style.display = "block"
 
   console.log("submitting")
 
@@ -423,19 +456,24 @@ function correctAns(event, randomQuestion, userId, userName) {
       id: userId,
       name: userName
     }
-    // debugger
+
     renderQuestions(globalQuestion, user)
 }
 
 function gameOver(user){
   stopTimer()
   count = globalCount
-  // debugger
+
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
   const clickHereToBegin = document.getElementById("click-here-to-begin")
   questionContainer.style.display = "none"
   // questionContainer.remove()
+
+  const bigRedX = document.getElementById("big-red-x")
+  bigRedX.style.display = "none"
+  const bigGreenCheckmark = document.getElementById("big-green-checkmark")
+  bigGreenCheckmark.style.display = "none"
 
   const gameOverMessage = document.createElement("h1")
   
@@ -444,21 +482,22 @@ function gameOver(user){
   const restart = document.createElement("h3")
   restart.innerText = "Would you like to try again?"
 
-  yesBtn = document.createElement("button")
-  yesBtn.setAttribute("id", "yes-btn")
-  yesBtn.innerText = "Yes"
+  // yesBtn = document.createElement("button")
+  // yesBtn.setAttribute("id", "yes-btn")
+  // yesBtn.innerText = "Yes"
 
   noBtn = document.createElement("button")
   noBtn.setAttribute("id", "no-btn")
-  noBtn.innerText = "No"
+  // noBtn.innerText = "No"
+  noBtn.innerText = "Yes"
   
-  restart.append(yesBtn,noBtn)
+  restart.append(noBtn)
   gameOverMessage.append(restart)
   main.append(gameOverMessage)
 
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), clickHereToBegin.remove(), submitLogin(event)))
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event)))
-  yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event, user)))
+  // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event, user)))
   noBtn.addEventListener("click", (event) => (gameOverMessage.remove(), fetchUsers(event)))
-  // debugger
+
 }

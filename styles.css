@@ -1,14 +1,10 @@
-/* div#question-container {
-    font-size: 30px;
-  } */
+logged-in-message {
+    /* font-size: 15px; */
+    font-size: 10000%;
+    color: #dddddd;
+  }
 
-  /* div#answer {
-      font-size: 30px
-  } */
-/* 
-  h3{
-      font-size: 50px
-  } */
   .score-container {
     display: none;
   }
+

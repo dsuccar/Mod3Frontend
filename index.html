@@ -1,33 +1,81 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Questions</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.2/css/bulma.css">
-  </head>
-  <body>
-    <div class="container">
+
+<head>
+  <meta charset="utf-8">
+  <title>Questions</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.2/css/bulma.css">
+</head>
+
+<body>
+  <div class="container">
     <header>
-          <div class="block">
-      <h2 class ="title is-3">Welcome To Our Knowledge App, NOT a Quiz</h2>
-      
-      <p class="score-check-x content" id="round-points"></p>
-          <div class="block">
-      <p class="score-check-x" id="big-red-x"></p>
-      <p class="score-check-x" id="big-green-checkmark"></p>
-        <!-- <p class="round-points"></p>
+      <div class="block">
+        <div class="box has-text-centered has-background-light">
+          <h2 class="title is-3">Welcome To Our Knowledge App, NOT a Quiz</h2>
+        </div>
+
+        <div class="block">
+          <p class="score-check-x" id="round-points"></p>
+          <p class="score-check-x" id="big-red-x"></p>
+          <p class="score-check-x" id="big-green-checkmark"></p>
+        </div>
+      </div>
+      <!-- <p class="round-points"></p>
         <p class="big-red-x"></p>
         <p class="big-green-checkmark"></p> -->
     </header>
-        <div class="block">
-    <main class="main content is-medium">
-      <div id='question-container'></div>
-      <div class="block"></div>
+    <div class="block">
+
+      <div class="column is-one-half">
+      <main class=" main content">
+        </main>
+
+
+        <div id="login-container">
+          <!-- const main = document.querySelector(".main")
+  const loginContainer = document.createElement("div")
+  loginContainer.setAttribute("id", "login-container") -->
+
+          <div id="attach" class="column is-one-quarter is-pulled-right">
+            <h3 id="login-message" class="title is-3">Login here:</h6>
+            <input placeholder="Log in here..." display="block">
+          
+
+            <!-- const input = document.createElement("input")
+  input.placeholder = "Log in here..."  -->
+
+            <button id="login-button"> Login </button>
+
+            <!-- const submitBtn = document.createElement("button")
+  submitBtn.innerText = "Login" -->
+
+            <div id="score-container"></div>
+            <!-- const scoreContainer = document.createElement("div")
+  scoreContainer.setAttribute("id", "score-container") -->
+            <h3 id="score-container-title">Click here to see our users</h3>
+            <!-- const scoreContainerTitle = document.createElement("h3")
+  scoreContainerTitle.setAttribute("id", "score-container-title")
+  scoreContainerTitle.innerText = "Click here to see our users" -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="column is-one-half">
+
+    <div id='question-container'></div>
+    <div class="block"></div>
     </main>
     <!-- <button id="submit">Skip Question</button> -->
     <div id="results"></div>
+  </div>
+  <script src="./src/index.js"></script>
+</body>
 
-    <script src="./src/index.js"></script>
-  </body>
 </html>
