@@ -3,11 +3,6 @@
 
 <head>
   <meta charset="utf-8">
-  <!DOCTYPE html>
-<html lang="en" dir="ltr">
-
-<head>
-  <meta charset="utf-8">
   <title>Questions</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.2/css/bulma.css">
@@ -30,6 +25,9 @@
           <div class="column ">
             <p id="lives"></p> 
               </div>
+          <!-- <div class="column is-half">
+          <span id="timer"></span>
+        </div> -->
             </div>
           </div>
         </div>
@@ -54,7 +52,10 @@
         <div id="attach" class="column is-one-quarter is-pulled-right">
           <h3 id="login-message" class="title is-3">Login here:</h6>
             <h6 id="logged-in-message" class="is-6"></h6>
+            <!-- <form id="login-form"> -->
               <input placeholder="Log in here..." display="block">
+              <!-- <input type="submit" value="Submit"> -->
+            <!-- </form> -->
             <button id="login-button"> Login </button>
             <div id="score-container"></div>
             <br>
@@ -71,16 +72,33 @@
               <li class="leaderboard"></li>
               <li class="leaderboard"></li>
             </ul> 
-        </div>
+        </div><!-- may need to remove this div  -->
         <img  class ="container" src="https://www.sporcle.com/blog/wp-content/uploads/2018/10/1-69.jpg" frameborder="100" id="brain">
       </div>
     </div>
     <div id="main-page">
-    </div>
+      <!-- <h1 id="click-here-to-begin" class="title is-3">Welcome! Click here to begin.</h1> -->
 
+    </div>
+    <!-- const mainPageContent = document.createElement("div")
+        mainPageContent.setAttribute("id", "main-page")
+      
+        const h1 = document.createElement("h1")
+        h1.setAttribute("id", "click-here-to-begin")
+        h1.innerText = "Welcome! Click here to begin." -->
   </div>
   </div>
   </div>
+  <!-- const chancesLeft = document.createElement("p")
+  chancesLeft.setAttribute("id", "timer")
+  chancesLeft.innerText = "Lives: " + lives
+
+  const stopwatch = document.createElement("span")
+  stopwatch.setAttribute("id", "timer")
+  stopwatch.innerText = "Time left: " + count
+  questionContainer.append(questionText, stopwatch, chancesLeft) -->
+
+
   <div class="block"></div>
   <div class="column is-one-half ">
 
