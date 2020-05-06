@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let globalCount = 10
+let globalCount = 70
 // let count = 7
 let count = globalCount
 let globalLives = 5
@@ -39,7 +39,7 @@ function stopTimer(){
   clearInterval(timer)
 }
 
-function timeLeft(user){
+function timeLeft(user, users){
   // function stopTimer(){
   //   clearInterval(timer)
   // }
@@ -51,8 +51,8 @@ timer = setInterval(function(){
 
 if(count <= 0){
   // stopTimer()
-  gameOver(user)
-  count = 7
+  gameOver(user, users)
+  count = 70
 } },1000)
 }
 
@@ -103,7 +103,7 @@ function loginPage(users){
   // loggedIn.classList.add("is-6")
   // loggedIn.innerText = "You have successfully logged in!"
   loggedIn.style.display = "none"
-  // debugger
+
   // const scoreContainer = document.createElement("div")
   // scoreContainer.setAttribute("id", "score-container")
   const scoreContainer = document.getElementById("score-container")
@@ -131,6 +131,7 @@ function loginPage(users){
   // main.append(loginContainer)
   // const loginForm = document.getElementById("login-form")
   loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
+  // loginBtn.onclick = submitLogin(event, users)
   // loginForm.addEventListener("submit", (event) => submitLogin(event, users) )
   // loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
 }
@@ -171,7 +172,7 @@ function scoreBoard(users){
     // for(let i = 0; i < variable; i++){
   for(let i = 0; i < variable; i++){
     // highScorers.push(users[i].user_questions)
-    // debugger
+
     // const li = document.createElement("li")
     // li.classList.add("leaderboard")
     li[i].innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
@@ -197,7 +198,7 @@ function scoreBoard(users){
 
 function submitLogin(event, users){ //login finds a user, or creates new
   // event.preventDefault()
-  debugger
+  // debugger
   console.log("submitting login")
   const input = document.querySelector("input")
   input.style.display = "none"
@@ -208,7 +209,7 @@ function submitLogin(event, users){ //login finds a user, or creates new
   const attach = document.getElementById("attach")
   // const loggedIn = document.createElement("h6")
   const loggedIn = document.getElementById("logged-in-message")
-  // debugger
+
   // loggedIn.setAttribute("id", "logged-in-message")
   // loggedIn.classList.add("is-6")
   // loggedIn.classList.add("subtitle")
@@ -225,13 +226,13 @@ function submitLogin(event, users){ //login finds a user, or creates new
   function myFunc(user) {
     return user.name
   }
-
+  debugger
   if(Array.isArray(users) === true){
     mappedUsers = users.map(myFunc)
   }else{
     mappedUsers = users
   }
-debugger
+
   if(users.length > 1){
     user = users.find(user => user.name === input.value )
   }
@@ -240,31 +241,33 @@ debugger
   //   // renderMain(existingUser)
   //   fetchQuestions(user)
   // }else if (input.value !== null && mappedUsers.includes(input.value)){  
-  // debugger
+
     if (input.value !== null && mappedUsers.includes(input.value)){  
       existingUser = user
       // renderMain(user)
-      fetchQuestions(user)
+      // fetchQuestions(user, users)
+      fetchQuestions(existingUser, users)
     }else{
-    const obj = {
-      name: event.target.parentNode.children[1].value
-      // user_questions: user.user_questions
-    }
-    fetch(USERS_URL, {
-      method: "POST",
-      headers: {"Content-Type" : "application/json",
-        "Accept" : "application/json"},
-      body: JSON.stringify(obj)
-    }).then(resp => resp.json()).then(user => fetchQuestions(user))
-    // }).then(resp => resp.json()).then(user => renderMain(user))
+      const obj = {
+        name: event.target.parentNode.children[1].value
+        // user_questions: user.user_questions
+        }
+      fetch(USERS_URL, {
+        method: "POST",
+        headers: {"Content-Type" : "application/json",
+          "Accept" : "application/json"},
+        body: JSON.stringify(obj)
+      }).then(resp => resp.json()).then(user => fetchQuestions(user, users))
+      // }).then(resp => resp.json()).then(user => renderMain(user))
   }
 }
 
-function fetchQuestions(user) {
+function fetchQuestions(user, users) {
+
   console.log("Loading questions")
   fetch(QUESTIONS_URL)
     .then(resp => resp.json())
-    .then(question => beforeRenderQuestions(question, user))
+    .then(question => beforeRenderQuestions(question, user, users))
     // .then(question => renderQuestions(question, user))
 }
 
@@ -303,7 +306,7 @@ function fetchQuestions(user) {
 //     h1.style.display = "block"
 //     mainPageContent.append(h1)
 //   }
-//   debugger
+
 //   const main = document.querySelector(".main")
 
 //   const loginContainer = document.getElementById("login-container")
@@ -320,22 +323,25 @@ function fetchQuestions(user) {
 //   // h1.addEventListener("click", () => timeLeft())
 // }
 
-function beforeRenderQuestions(question, user){
+function beforeRenderQuestions(question, user, users){
   console.log("before rendering")
-  // const scoreContainer = document.getElementById("score-container")
-  // scoreContainer.style.display = "none"
-  // const scoreContainerTitle = document.getElementById("score-container-title")
-  // scoreContainerTitle.style.display = "none"
-  // const ul = document.getElementById("leaderboard-scores")
-  // ul.style.dispay = "none"
+
+  const scoreContainer = document.getElementById("score-container")
+  scoreContainer.style.display = "none"
+  const scoreContainerTitle = document.getElementById("score-container-title")
+  scoreContainerTitle.style.display = "none"
+  const ul = document.getElementById("leaderboard-scores")
+  ul.style.dispay = "none"
+  // const li = document.querySelectorAll(".leaderboard")
+  // li.style.display = "none"
   // ul.remove()
   lives = globalLives
   globalPoints = 0
-  timeLeft(user)
-  renderQuestions(question, user)
+  timeLeft(user, users)
+  renderQuestions(question, user, users)
 }
 
-function renderQuestions(question, user){
+function renderQuestions(question, user, users){
   console.log("Rendering question for user")
 
   const h1 = document.getElementById("click-here-to-begin")
@@ -425,13 +431,13 @@ function renderQuestions(question, user){
   }
 
   const correct = document.getElementById("correct-answer")
-  correct.addEventListener("click", (event) => correctAns(event, randomQuestion, user.id, user.name))
+  correct.addEventListener("click", (event) => correctAns(event, randomQuestion, user.id, user.name, users))
 
   const incorrect = document.querySelectorAll("#incorrect-answer")
-  incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event, user))})
+  incorrect.forEach((el) => {el.addEventListener("click", (event) => incorrectAns(event, user, users))})
 }
 
-function incorrectAns(event, user){
+function incorrectAns(event, user, users){
   event.preventDefault()
   questionContainer = document.getElementById("question-container")
   lives -= 1
@@ -454,13 +460,13 @@ function incorrectAns(event, user){
 
   console.log("Incorrect!")
   if(lives <= 0){
-    gameOver(globalQuestion, user)
+    gameOver(globalQuestion, user, users)
   }else{
-  renderQuestions(globalQuestion, user) //render next question
+  renderQuestions(globalQuestion, user, users) //render next question
   }
 }
 
-function correctAns(event, randomQuestion, userId, userName) {
+function correctAns(event, randomQuestion, userId, userName, users) {
   event.preventDefault()
 
   const points = document.getElementById("round-points")
@@ -497,10 +503,12 @@ function correctAns(event, randomQuestion, userId, userName) {
       name: userName
     }
 
-    renderQuestions(globalQuestion, user)
+    renderQuestions(globalQuestion, user, users)
 }
 
-function gameOver(question, user){
+function gameOver(question, user, users){
+
+  // scoreBoard(users)
   stopTimer()
   count = globalCount
 
@@ -538,10 +546,10 @@ function gameOver(question, user){
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), clickHereToBegin.remove(), submitLogin(event)))
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event)))
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event, user)))
-
+ 
   // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user), scoreBoard(user)))
   //the above doesn't work because you don't pass in multiple users in this function
-  noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user)))
-  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers())) //has the "double bug"
+  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user, users)))
+  noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers())) //has the "double bug"
   // noBtn.addEventListener("click", () => (gameOverMessage.remove(), location.reload())) //works but I don't like it
 }
