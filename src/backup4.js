@@ -3,12 +3,13 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let globalCount = 70
+// let globalCount = 70
 // let count = 7
-let count = globalCount
+// let count = globalCount
 let globalLives = 5
 let lives = globalLives
-let timer
+// let timer
+let users
 
 function stringFixer(string){ //cleans data from database. figure out how to do this in back-end if you have time
   const string2 = string.replace(/&quot;/g, "'")
@@ -35,35 +36,36 @@ function stringFixer(string){ //cleans data from database. figure out how to do 
   return string22
 }
 
-function stopTimer(){
-  clearInterval(timer)
-}
+// function stopTimer(){
+//   clearInterval(timer)
+// }
 
-function timeLeft(user, users){
-  // function stopTimer(){
-  //   clearInterval(timer)
-  // }
-  debugger
-  timer = setInterval(function(){
-    count -= 1
-    // if(stopwatch !== null && stopwatch !== undefined){
-    stopwatch = document.getElementById("timer")
-    stopwatch.innerText = "Time left: " + count
+// function timeLeft(user, users){
+//   // function stopTimer(){
+//   //   clearInterval(timer)
+//   // }
+//   debugger
+// timer = setInterval(function(){
+//   count -= 1
+//   // if(stopwatch !== null && stopwatch !== undefined){
+//   stopwatch = document.getElementById("timer")
+//   stopwatch.innerText = "Time left: " + count
 
-  if(count <= 0){
-    // stopTimer()
-    gameOver(user, users)
-    count = 70
-  } },1000)
-}
+// if(count <= 0){
+//   // stopTimer()
+//   gameOver(user, users)
+//   count = 70
+// } },1000)
+// }
 
 document.addEventListener("DOMContentLoaded", () => {
   fetchUsers()
+//   loginPage(users)
 })
 
 function fetchUsers(){
   console.log("fetching users")
-  return fetch(USERS_URL)
+  fetch(USERS_URL)
   .then(resp => resp.json())
   .then(users => loginPage(users))
 }
@@ -123,7 +125,7 @@ function loginPage(users){
   //     ul.style.display = "none"
   //   }
   // });
-
+//   debugger
   // leaderboard
   scoreBoard(users)
 
@@ -132,14 +134,15 @@ function loginPage(users){
   // main.append(loginContainer)
   // const loginForm = document.getElementById("login-form")
   loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
-  // loginBtn.onsubmit = submitLogin(event, users)
-  // loginForm.addEventListener("submit", (event) => submitLogin(event, users) )
-  // loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
+  // loginBtn.onclick = beforeSubmitLogin
+//   loginForm.addEventListener("submit", (event) => submitLogin(event, users) )
+//   loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
 }
 
 function scoreBoard(users){
   console.log("scoreboard")
-  // leaderboard
+
+
   const scoreContainer = document.getElementById("score-container")
 
   // const scoreContainerTitle = document.getElementById("score-container-title")
@@ -150,12 +153,17 @@ function scoreBoard(users){
   // ul.setAttribute("id", "leaderboard-scores")
   ul = document.getElementById("leaderboard-scores")
 
-  const highScorers = []
+//   const highScorers = []
   let usersInfo = users
-  let result = []
+
+//   let result = []
   for(let i = 0; i < usersInfo.length; i++){
-    usersInfo[i].user_questions = usersInfo[i].user_questions.length
-    result.push(usersInfo)
+    //   if(usersInfo[i].user_questions.length > 1){
+    if(Array.isArray(usersInfo[i].user_questions) === true){
+        usersInfo[i].user_questions = usersInfo[i].user_questions.length
+    }else{
+        usersInfo[i].user_questions
+    }
   }
   usersInfo.sort(function(a, b) { 
     return b.user_questions - a.user_questions;
@@ -179,7 +187,7 @@ function scoreBoard(users){
     li[i].innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
     // ul.append(li)
   }
-
+debugger
   // scoreContainerTitle.addEventListener("click", () => {
   //   if(scoreContainer.style.display === "none"){
   //     scoreContainer.style.display = "block"
@@ -195,6 +203,12 @@ function scoreBoard(users){
 // function beforeSubmitLogin(event, users){
 //   console.log("hit me")
 //   submitLogin(event, users)
+// }
+
+// function beforeSubmitLogin(event, users){
+//     // debugger
+//     const loginBtn = document.getElementById("login-button")
+//     loginBtn.onclick = submitLogin(event, users)
 // }
 
 function submitLogin(event, users){ //login finds a user, or creates new
@@ -227,7 +241,6 @@ function submitLogin(event, users){ //login finds a user, or creates new
   function myFunc(user) {
     return user.name
   }
-  debugger
   if(Array.isArray(users) === true){
     mappedUsers = users.map(myFunc)
   }else{
@@ -338,7 +351,7 @@ function beforeRenderQuestions(question, user, users){
   // ul.remove()
   lives = globalLives
   globalPoints = 0
-  timeLeft(user, users)
+//   timeLeft(user, users)
   renderQuestions(question, user, users)
 }
 
@@ -381,14 +394,20 @@ function renderQuestions(question, user, users){
 
   questionText.innerText = dataText
 
-  const chancesLeft = document.createElement("p")
-  chancesLeft.setAttribute("id", "timer")
+  const chancesLeft = document.getElementById("lives")
+//   debugger
   chancesLeft.innerText = "Lives: " + lives
+//   const chancesLeft = document.createElement("p")
+// const chancesLeft = document.getElementById("timer")
+// chancesLeft.innerText = "Lives: " + lives
 
-  const stopwatch = document.createElement("span")
-  stopwatch.setAttribute("id", "timer")
-  stopwatch.innerText = "Time left: " + count
-  questionContainer.append(questionText, stopwatch, chancesLeft)
+//   const stopwatch = document.createElement("span")
+//   stopwatch.setAttribute("id", "timer")
+//   const stopwatch = document.getElementById("timer")
+//   stopwatch.innerText = "Time left: " + count
+
+//   questionContainer.append(questionText, stopwatch, chancesLeft)
+  questionContainer.append(questionText)
   
   const answerContainer = document.createElement("div")
   answerContainer.setAttribute("id", "answer-container")
@@ -510,8 +529,8 @@ function correctAns(event, randomQuestion, userId, userName, users) {
 function gameOver(question, user, users){
 
   // scoreBoard(users)
-  stopTimer()
-  count = globalCount
+//   stopTimer()
+//   count = globalCount
 
   const main = document.querySelector(".main")
   const questionContainer = document.getElementById("question-container")
@@ -552,5 +571,6 @@ function gameOver(question, user, users){
   //the above doesn't work because you don't pass in multiple users in this function
   // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user, users)))
   noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers())) //has the "double bug"
+//   noBtn.addEventListener("click", () => (gameOverMessage.remove(), loginPage(users)))
   // noBtn.addEventListener("click", () => (gameOverMessage.remove(), location.reload())) //works but I don't like it
 }
