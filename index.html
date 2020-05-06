@@ -9,7 +9,6 @@
 </head>
 
 <body>
-  <div class="container">
     <header>
       <div class="block">
         <div class="box has-text-centered has-background-light">
@@ -22,9 +21,6 @@
           <p class="score-check-x" id="big-green-checkmark"></p>
         </div>
       </div>
-      <!-- <p class="round-points"></p>
-        <p class="big-red-x"></p>
-        <p class="big-green-checkmark"></p> -->
     </header>
     <div class="block">
 
@@ -34,32 +30,41 @@
 
 
         <div id="login-container">
-          <!-- const main = document.querySelector(".main")
-  const loginContainer = document.createElement("div")
-  loginContainer.setAttribute("id", "login-container") -->
-
           <div id="attach" class="column is-one-quarter is-pulled-right">
             <h3 id="login-message" class="title is-3">Login here:</h6>
-            <input placeholder="Log in here..." display="block">
-          
-
-            <!-- const input = document.createElement("input")
-  input.placeholder = "Log in here..."  -->
-
+            <h6 id="logged-in-message" class="is-6"></h6>
+            <form id="login-form"> 
+              <input placeholder="Log in here..." display="block">
+              <input type="submit" value="Submit">
+            </form>
             <button id="login-button"> Login </button>
-
-            <!-- const submitBtn = document.createElement("button")
-  submitBtn.innerText = "Login" -->
-
-            <div id="score-container"></div>
-            <!-- const scoreContainer = document.createElement("div")
-  scoreContainer.setAttribute("id", "score-container") -->
-            <h3 id="score-container-title">Click here to see our users</h3>
-            <!-- const scoreContainerTitle = document.createElement("h3")
-  scoreContainerTitle.setAttribute("id", "score-container-title")
-  scoreContainerTitle.innerText = "Click here to see our users" -->
+            <div id="score-container"></div> 
+            <h3 id="score-container-title">Click here to see our top scores</h3>
+              <ul id="leaderboard-scores">
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+                <li class="leaderboard"></li>
+              </ul>
+            </div><!-- may need to remove this div  -->
           </div>
         </div>
+          <div id="main-page">
+            <!-- <h1 id="click-here-to-begin" class="title is-3">Welcome! Click here to begin.</h1> -->
+
+          </div>
+        <!-- const mainPageContent = document.createElement("div")
+        mainPageContent.setAttribute("id", "main-page")
+      
+        const h1 = document.createElement("h1")
+        h1.setAttribute("id", "click-here-to-begin")
+        h1.innerText = "Welcome! Click here to begin." -->
       </div>
     </div>
   </div>
@@ -72,10 +77,10 @@
     <div id='question-container'></div>
     <div class="block"></div>
     </main>
-    <!-- <button id="submit">Skip Question</button> -->
     <div id="results"></div>
   </div>
   <script src="./src/index.js"></script>
+  <!-- <script src="./src/backup.js"></script> -->
 </body>
 
 </html>

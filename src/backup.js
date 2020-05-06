@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let globalCount = 10
+let globalCount = 60
 // let count = 7
 let count = globalCount
 let globalLives = 5
@@ -60,6 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchUsers()
 })
 
+// function fetchQuestions(user) {
+//   console.log("Loading questions")
+//   fetch(QUESTIONS_URL)
+//     .then(resp => resp.json())
+//     .then(question => beforeRenderQuestions(question, user))
+//     // .then(question => renderQuestions(question, user))
+// }
+
 function fetchUsers(){
   console.log("fetching users")
   return fetch(USERS_URL)
@@ -69,7 +77,7 @@ function fetchUsers(){
 
 function loginPage(users){
   console.log("login page")
-  // lives = globalLives
+  lives = globalLives
   const h1 = document.getElementById("click-here-to-begin")
   if(h1 !== null){
   h1.style.display = "none"
@@ -103,36 +111,25 @@ function loginPage(users){
   // loggedIn.classList.add("is-6")
   // loggedIn.innerText = "You have successfully logged in!"
   loggedIn.style.display = "none"
-  // debugger
+
   // const scoreContainer = document.createElement("div")
   // scoreContainer.setAttribute("id", "score-container")
   const scoreContainer = document.getElementById("score-container")
-  // scoreContainer.style.display = "block"
+
   // const scoreContainerTitle = document.createElement("h3")
   // scoreContainerTitle.setAttribute("id", "score-container-title")
   // scoreContainerTitle.innerText = "Click here to see our users"
   const scoreContainerTitle = document.getElementById("score-container-title")
-  // scoreContainerTitle.style.display = "block"
-  ul = document.getElementById("leaderboard-scores")
-
-  // scoreContainerTitle.addEventListener("click", () => {
-  //   if(ul.style.display === "none"){
-  //     ul.style.display = "block"
-  //   }else if (ul.style.display = "block"){
-  //     ul.style.display = "none"
-  //   }
-  // });
 
   // leaderboard
   scoreBoard(users)
 
   // loginContainer.append(input, submitBtn, scoreContainerTitle)
-  // loginContainer.append(loggedIn)
-  // main.append(loginContainer)
-  // const loginForm = document.getElementById("login-form")
+  loginContainer.append(loggedIn)
+  main.append(loginContainer)
+  
   loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
-  // loginForm.addEventListener("submit", (event) => submitLogin(event, users) )
-  // loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
+
 }
 
 function scoreBoard(users){
@@ -140,13 +137,11 @@ function scoreBoard(users){
   // leaderboard
   const scoreContainer = document.getElementById("score-container")
 
-  // const scoreContainerTitle = document.getElementById("score-container-title")
-  
-  // scoreContainer.style.display = "none"
+  const scoreContainerTitle = document.getElementById("score-container-title")
+  scoreContainer.style.display = "none"
 
-  // ul = document.createElement("ul")
-  // ul.setAttribute("id", "leaderboard-scores")
-  ul = document.getElementById("leaderboard-scores")
+  ul = document.createElement("ul")
+  ul.setAttribute("id", "leaderboard-scores")
 
   const highScorers = []
   let usersInfo = users
@@ -166,38 +161,29 @@ function scoreBoard(users){
   }else{
     variable = 10
   }
-  const li = document.querySelectorAll(".leaderboard")
   // for(let i = 0; i < 10; i++){
-    // for(let i = 0; i < variable; i++){
-  for(let i = 0; i < variable; i++){
-    // highScorers.push(users[i].user_questions)
-    // debugger
-    // const li = document.createElement("li")
-    // li.classList.add("leaderboard")
-    li[i].innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
-    // ul.append(li)
+    for(let i = 0; i < variable; i++){
+    highScorers.push(users[i].user_questions)
+    const li = document.createElement("li")
+    li.classList.add("leaderboard")
+    li.innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
+    ul.append(li)
   }
 
-  // scoreContainerTitle.addEventListener("click", () => {
-  //   if(scoreContainer.style.display === "none"){
-  //     scoreContainer.style.display = "block"
-  //   }else if (scoreContainer.style.display = "block"){
-  //     scoreContainer.style.display = "none"
-  //   }
-  // });
+  scoreContainerTitle.addEventListener("click", () => {
+    if(scoreContainer.style.display === "none"){
+      scoreContainer.style.display = "block"
+    }else if (scoreContainer.style.display = "block"){
+      scoreContainer.style.display = "none"
+    }
+  });
 
-  // scoreContainerTitle.append(scoreContainer)
-  // scoreContainer.append(ul)
+  scoreContainerTitle.append(scoreContainer)
+  scoreContainer.append(ul)
 }
 
-// function beforeSubmitLogin(event, users){
-//   console.log("hit me")
-//   submitLogin(event, users)
-// }
-
-function submitLogin(event, users){ //login finds a user, or creates new
-  // event.preventDefault()
-  debugger
+//login finds a user, or creates new
+function submitLogin(event, users){
   console.log("submitting login")
   const input = document.querySelector("input")
   input.style.display = "none"
@@ -231,7 +217,8 @@ function submitLogin(event, users){ //login finds a user, or creates new
   }else{
     mappedUsers = users
   }
-debugger
+  // let obj = objArray.find(obj => obj.id == 3);
+
   if(users.length > 1){
     user = users.find(user => user.name === input.value )
   }
@@ -240,14 +227,13 @@ debugger
   //   // renderMain(existingUser)
   //   fetchQuestions(user)
   // }else if (input.value !== null && mappedUsers.includes(input.value)){  
-  // debugger
     if (input.value !== null && mappedUsers.includes(input.value)){  
       existingUser = user
       // renderMain(user)
       fetchQuestions(user)
     }else{
     const obj = {
-      name: event.target.parentNode.children[1].value
+      name: event.target.parentNode.children[0].value
       // user_questions: user.user_questions
     }
     fetch(USERS_URL, {
@@ -322,22 +308,18 @@ function fetchQuestions(user) {
 
 function beforeRenderQuestions(question, user){
   console.log("before rendering")
-  // const scoreContainer = document.getElementById("score-container")
-  // scoreContainer.style.display = "none"
-  // const scoreContainerTitle = document.getElementById("score-container-title")
-  // scoreContainerTitle.style.display = "none"
-  // const ul = document.getElementById("leaderboard-scores")
-  // ul.style.dispay = "none"
-  // ul.remove()
-  lives = globalLives
   globalPoints = 0
   timeLeft(user)
   renderQuestions(question, user)
 }
 
 function renderQuestions(question, user){
+  // lives = globalLives
   console.log("Rendering question for user")
-
+  // const h1 = document.getElementById("click-here-to-begin")
+  // if(h1 !== null){
+  // h1.remove()
+  // }
   const h1 = document.getElementById("click-here-to-begin")
   const mainPageContent = document.getElementById("main-page")
 
@@ -345,14 +327,15 @@ function renderQuestions(question, user){
     h1.remove()
     mainPageContent.remove()
   }
+  // mainPageContent.style.display = "none"
 
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
   scoreCheckX[i].style.display = "block"
   }
-
+  // let count = 6
   globalQuestion = question //intentional global variable to allow incorrectAns and correctAns functions to run
-
+  // const points = document.querySelector(".round-points")
   const points = document.getElementById("round-points")
   if(globalPoints > 0){
     points.innerText = `Points: ${globalPoints}`
@@ -361,7 +344,17 @@ function renderQuestions(question, user){
   }
   let randomQuestion = question[Math.floor(Math.random() * question.length)]//Math.floor(Math.random() * Math.floor(max));
 
+
+  // let mainPageContent = document.getElementById("main-page")
+
+  // if(mainPageContent){
+  //   mainPageContent.remove()
+  // }
   const loginContainer = document.getElementById("login-container")
+  // if(loginContainer){
+  //   loginContainer.remove() //ann said the .remove() can impact performance
+  // }
+  // loginContainer.style.display = "none"
 
   const questionContainer = document.getElementById("question-container")
   questionContainer.style.display = "block"
@@ -386,6 +379,8 @@ function renderQuestions(question, user){
   const answerContainer = document.createElement("div")
   answerContainer.setAttribute("id", "answer-container")
   
+  // questionContainer.append(answerContainer, stopwatch)
+  // questionContainer.append(answerContainer, timer)
   questionContainer.append(answerContainer)
 
   let rawCorrectAnswer = randomQuestion.correct_answer
@@ -454,7 +449,7 @@ function incorrectAns(event, user){
 
   console.log("Incorrect!")
   if(lives <= 0){
-    gameOver(globalQuestion, user)
+    gameOver(user)
   }else{
   renderQuestions(globalQuestion, user) //render next question
   }
@@ -500,7 +495,7 @@ function correctAns(event, randomQuestion, userId, userName) {
     renderQuestions(globalQuestion, user)
 }
 
-function gameOver(question, user){
+function gameOver(user){
   stopTimer()
   count = globalCount
 
@@ -538,10 +533,6 @@ function gameOver(question, user){
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), clickHereToBegin.remove(), submitLogin(event)))
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event)))
   // yesBtn.addEventListener("click", (event) => (gameOverMessage.remove(), submitLogin(event, user)))
-
-  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user), scoreBoard(user)))
-  //the above doesn't work because you don't pass in multiple users in this function
-  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), beforeRenderQuestions(question, user)))
-  noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers())) //has the "double bug"
-  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), location.reload())) //works but I don't like it
+  noBtn.addEventListener("click", () => (gameOverMessage.remove(), fetchUsers()))
+  // noBtn.addEventListener("click", () => (gameOverMessage.remove(), location.reload()))
 }

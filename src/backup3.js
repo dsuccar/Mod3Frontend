@@ -3,7 +3,7 @@ const QUESTIONS_URL = `${BASE_URL}/questions`
 const USERQUESTIONS_URL = `${BASE_URL}/user_questions`
 const USERS_URL = `${BASE_URL}/users`
 let globalPoints = 0
-let globalCount = 10
+let globalCount = 60
 // let count = 7
 let count = globalCount
 let globalLives = 5
@@ -115,24 +115,25 @@ function loginPage(users){
   // scoreContainerTitle.style.display = "block"
   ul = document.getElementById("leaderboard-scores")
 
-  // scoreContainerTitle.addEventListener("click", () => {
-  //   if(ul.style.display === "none"){
-  //     ul.style.display = "block"
-  //   }else if (ul.style.display = "block"){
-  //     ul.style.display = "none"
-  //   }
-  // });
+  scoreContainerTitle.addEventListener("click", () => {
+    if(ul.style.display === "none"){
+      ul.style.display = "block"
+    }else if (ul.style.display = "block"){
+      ul.style.display = "none"
+    }
+  });
 
   // leaderboard
   scoreBoard(users)
 
   // loginContainer.append(input, submitBtn, scoreContainerTitle)
-  // loginContainer.append(loggedIn)
-  // main.append(loginContainer)
-  // const loginForm = document.getElementById("login-form")
-  loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
-  // loginForm.addEventListener("submit", (event) => submitLogin(event, users) )
-  // loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
+  loginContainer.append(loggedIn)
+  main.append(loginContainer)
+  if(input.value === null){
+    alert("Please enter a username")
+  }else{
+  loginBtn.addEventListener("click", (event) => submitLogin(event, users))
+  }
 }
 
 function scoreBoard(users){
@@ -142,7 +143,7 @@ function scoreBoard(users){
 
   // const scoreContainerTitle = document.getElementById("score-container-title")
   
-  // scoreContainer.style.display = "none"
+  scoreContainer.style.display = "none"
 
   // ul = document.createElement("ul")
   // ul.setAttribute("id", "leaderboard-scores")
@@ -169,7 +170,10 @@ function scoreBoard(users){
   const li = document.querySelectorAll(".leaderboard")
   // for(let i = 0; i < 10; i++){
     // for(let i = 0; i < variable; i++){
-  for(let i = 0; i < variable; i++){
+  for(let i = 0; i < li.length; i++){
+    if(usersInfo[i].name === null){
+      usersInfo[i].name = "no name"
+    }
     // highScorers.push(users[i].user_questions)
     // debugger
     // const li = document.createElement("li")
@@ -177,7 +181,6 @@ function scoreBoard(users){
     li[i].innerText = `${usersInfo[i].name}: ${usersInfo[i].user_questions} points`
     // ul.append(li)
   }
-
   // scoreContainerTitle.addEventListener("click", () => {
   //   if(scoreContainer.style.display === "none"){
   //     scoreContainer.style.display = "block"
@@ -190,14 +193,7 @@ function scoreBoard(users){
   // scoreContainer.append(ul)
 }
 
-// function beforeSubmitLogin(event, users){
-//   console.log("hit me")
-//   submitLogin(event, users)
-// }
-
 function submitLogin(event, users){ //login finds a user, or creates new
-  // event.preventDefault()
-  debugger
   console.log("submitting login")
   const input = document.querySelector("input")
   input.style.display = "none"
@@ -231,7 +227,8 @@ function submitLogin(event, users){ //login finds a user, or creates new
   }else{
     mappedUsers = users
   }
-debugger
+  // let obj = objArray.find(obj => obj.id == 3);
+
   if(users.length > 1){
     user = users.find(user => user.name === input.value )
   }
@@ -240,14 +237,13 @@ debugger
   //   // renderMain(existingUser)
   //   fetchQuestions(user)
   // }else if (input.value !== null && mappedUsers.includes(input.value)){  
-  // debugger
     if (input.value !== null && mappedUsers.includes(input.value)){  
       existingUser = user
       // renderMain(user)
       fetchQuestions(user)
     }else{
     const obj = {
-      name: event.target.parentNode.children[1].value
+      name: event.target.parentNode.children[0].value
       // user_questions: user.user_questions
     }
     fetch(USERS_URL, {
@@ -322,13 +318,10 @@ function fetchQuestions(user) {
 
 function beforeRenderQuestions(question, user){
   console.log("before rendering")
-  // const scoreContainer = document.getElementById("score-container")
-  // scoreContainer.style.display = "none"
-  // const scoreContainerTitle = document.getElementById("score-container-title")
-  // scoreContainerTitle.style.display = "none"
-  // const ul = document.getElementById("leaderboard-scores")
-  // ul.style.dispay = "none"
-  // ul.remove()
+  const scoreContainerTitle = document.getElementById("score-container-title")
+  scoreContainerTitle.style.display = "none"
+  ul = document.getElementById("leaderboard-scores")
+  // ul.remove
   lives = globalLives
   globalPoints = 0
   timeLeft(user)
@@ -336,8 +329,12 @@ function beforeRenderQuestions(question, user){
 }
 
 function renderQuestions(question, user){
+  // lives = globalLives
   console.log("Rendering question for user")
-
+  // const h1 = document.getElementById("click-here-to-begin")
+  // if(h1 !== null){
+  // h1.remove()
+  // }
   const h1 = document.getElementById("click-here-to-begin")
   const mainPageContent = document.getElementById("main-page")
 
@@ -345,14 +342,15 @@ function renderQuestions(question, user){
     h1.remove()
     mainPageContent.remove()
   }
+  // mainPageContent.style.display = "none"
 
   const scoreCheckX = document.querySelectorAll(".score-check-x")
   for(let i = 0; i < scoreCheckX.length; i++){
   scoreCheckX[i].style.display = "block"
   }
-
+  // let count = 6
   globalQuestion = question //intentional global variable to allow incorrectAns and correctAns functions to run
-
+  // const points = document.querySelector(".round-points")
   const points = document.getElementById("round-points")
   if(globalPoints > 0){
     points.innerText = `Points: ${globalPoints}`
@@ -361,7 +359,17 @@ function renderQuestions(question, user){
   }
   let randomQuestion = question[Math.floor(Math.random() * question.length)]//Math.floor(Math.random() * Math.floor(max));
 
+
+  // let mainPageContent = document.getElementById("main-page")
+
+  // if(mainPageContent){
+  //   mainPageContent.remove()
+  // }
   const loginContainer = document.getElementById("login-container")
+  // if(loginContainer){
+  //   loginContainer.remove() //ann said the .remove() can impact performance
+  // }
+  // loginContainer.style.display = "none"
 
   const questionContainer = document.getElementById("question-container")
   questionContainer.style.display = "block"
@@ -386,6 +394,8 @@ function renderQuestions(question, user){
   const answerContainer = document.createElement("div")
   answerContainer.setAttribute("id", "answer-container")
   
+  // questionContainer.append(answerContainer, stopwatch)
+  // questionContainer.append(answerContainer, timer)
   questionContainer.append(answerContainer)
 
   let rawCorrectAnswer = randomQuestion.correct_answer
