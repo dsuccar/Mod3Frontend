@@ -74,6 +74,9 @@ function loginPage(users){
 //   scoreBoard(users)
     scoreBoard(globalUsers)
 
+    const loginMessage = document.getElementById("login-message")
+    loginMessage.style.display = "block"
+
 //   loginBtn.addEventListener("click", (event) => submitLogin(event, users) )
     // loginBtn.addEventListener("click", (event) => submitLogin(event, globalUsers) )
 // loginBtn.addEventListener("click", (event) => beforeSubmitLogin(event, users) )
@@ -183,6 +186,9 @@ function fetchQuestions(user, users) {
 
 function beforeRenderQuestions(question, user, users){
   console.log("before rendering")
+
+  const loginMessage = document.getElementById("login-message")
+  loginMessage.style.display = "none"
 
   const image = document.getElementById("brain")
   image.style.display = "none"
